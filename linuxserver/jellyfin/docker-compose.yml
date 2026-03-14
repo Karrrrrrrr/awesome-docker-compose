@@ -1,0 +1,38 @@
+version: '3.8'
+
+# LinuxServer.io Jellyfin - 媒体服务器
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: Asia/Shanghai
+      # NVIDIA GPU 硬件加速 (可选)
+      # NVIDIA_VISIBLE_DEVICES: all
+      # NVIDIA_DRIVER_CAPABILITIES: compute,video,utility
+    ports:
+      - "${JELLYFIN_HTTP_PORT:-8096}:8096"
+      - "${JELLYFIN_HTTPS_PORT:-8920}:8920"
+      - "${JELLYFIN_DISCOVERY_PORT:-1900}:1900/udp"
+      - "${JELLYFIN_SERVICE_PORT:-7359}:7359/udp"
+    volumes:
+      - ./config:/config
+      - ./media/tv:/data/tvshows
+      - ./media/movies:/data/movies
+      - ./media/music:/data/music
+    # GPU 支持 (可选)
+    # devices:
+    #   - /dev/dri:/dev/dri
+    networks:
+      - jellyfin_network
+
+volumes:
+  jellyfin_data:
+    driver: local
+
+networks:
+  jellyfin_network:
+    driver: bridge

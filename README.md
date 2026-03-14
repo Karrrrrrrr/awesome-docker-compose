@@ -6,8 +6,17 @@
 
 - **版本化管理**: 每个服务按版本独立目录，方便选择特定版本
 - **多版本支持**: 热门服务提供多个版本选择
+- **多镜像源**: 提供官方镜像、Bitnami、LinuxServer.io等多种选择
 - **完整配置**: 包含配置文件、健康检查、持久化存储
 - **管理界面**: 大部分服务附带Web管理界面
+
+## 镜像源说明
+
+| 镜像源 | 特点 | 目录后缀 |
+|--------|------|----------|
+| **官方镜像** | Docker Hub 官方维护 | 默认 |
+| **Bitnami** | 更安全、更精简、生产级 | `-bitnami` |
+| **LinuxServer.io** | 社区维护、支持PUID/PGID | `linuxserver/` |
 
 ## 目录结构
 
@@ -18,27 +27,34 @@ awesome-docker-compose/
 ├── README.md                       # 文档
 │
 ├── mysql/
-│   ├── mysql8/docker-compose.yml   # MySQL 8.0 + phpMyAdmin
-│   └── mysql5/docker-compose.yml   # MySQL 5.7 + phpMyAdmin
+│   ├── mysql8/docker-compose.yml       # MySQL 8.0 + phpMyAdmin
+│   ├── mysql5/docker-compose.yml       # MySQL 5.7 + phpMyAdmin
+│   └── mysql8-bitnami/docker-compose.yml  # MySQL 8.0 (Bitnami)
 │
 ├── postgres/
-│   ├── postgres16/docker-compose.yml  # PostgreSQL 16 + pgAdmin
-│   └── postgres14/docker-compose.yml  # PostgreSQL 14
+│   ├── postgres16/docker-compose.yml   # PostgreSQL 16 + pgAdmin
+│   ├── postgres14/docker-compose.yml   # PostgreSQL 14
+│   └── postgres16-bitnami/docker-compose.yml  # PostgreSQL 16 (Bitnami)
 │
 ├── mongo/
-│   ├── mongo7/docker-compose.yml   # MongoDB 7 + Mongo Express
-│   └── mongo6/docker-compose.yml   # MongoDB 6
+│   ├── mongo7/docker-compose.yml       # MongoDB 7 + Mongo Express
+│   ├── mongo6/docker-compose.yml       # MongoDB 6
+│   └── mongo7-bitnami/docker-compose.yml  # MongoDB 7 (Bitnami)
 │
 ├── redis/
-│   ├── redis7/docker-compose.yml   # Redis 7 + Redis Commander
-│   ├── redis6/docker-compose.yml   # Redis 6
-│   └── redis-cluster/docker-compose.yml  # Redis Cluster (6节点)
+│   ├── redis7/docker-compose.yml       # Redis 7 + Redis Commander
+│   ├── redis6/docker-compose.yml       # Redis 6
+│   ├── redis7-bitnami/docker-compose.yml  # Redis 7 (Bitnami)
+│   ├── redis-cluster/docker-compose.yml   # Redis Cluster (6节点)
+│   └── redis-sentinel/docker-compose.yml  # Redis Sentinel (高可用)
 │
 ├── rabbitmq/
-│   └── rabbitmq3/docker-compose.yml  # RabbitMQ 3 + Management UI
+│   ├── rabbitmq3/docker-compose.yml    # RabbitMQ 3 + Management UI
+│   └── rabbitmq3-bitnami/docker-compose.yml  # RabbitMQ 3 (Bitnami)
 │
 ├── kafka/
-│   ├── kafka3/docker-compose.yml   # Kafka 3 + Zookeeper + Kafka UI
+│   ├── kafka3/docker-compose.yml       # Kafka 3 + Zookeeper + Kafka UI
+│   ├── kafka3-bitnami/docker-compose.yml   # Kafka 3 (Bitnami)
 │   └── kafka-kraft/docker-compose.yml  # Kafka KRaft模式 (无Zookeeper)
 │
 ├── elasticsearch/
@@ -73,7 +89,8 @@ awesome-docker-compose/
 │   └── caddy2/docker-compose.yml   # Caddy 2
 │
 ├── consul/
-│   └── consul1/docker-compose.yml  # Consul 1
+│   ├── consul1/docker-compose.yml  # Consul 1
+│   └── consul-bitnami/docker-compose.yml  # Consul (Bitnami)
 │
 ├── etcd/
 │   └── etcd3/docker-compose.yml    # Etcd 3 + etcdkeeper
@@ -91,7 +108,8 @@ awesome-docker-compose/
 │   └── openresty/docker-compose.yml  # OpenResty
 │
 ├── gitea/
-│   └── gitea1/docker-compose.yml   # Gitea 1
+│   ├── gitea1/docker-compose.yml   # Gitea 1
+│   └── gitea1-bitnami/docker-compose.yml  # Gitea 1 (Bitnami)
 │
 ├── gitlab/
 │   └── gitlab-ce/docker-compose.yml  # GitLab CE
@@ -111,8 +129,22 @@ awesome-docker-compose/
 ├── debian/
 │   └── debian12/docker-compose.yml # Debian 12
 │
-└── ubuntu/
-    └── ubuntu22/docker-compose.yml # Ubuntu 22.04
+├── ubuntu/
+│   └── ubuntu22/docker-compose.yml # Ubuntu 22.04
+│
+└── linuxserver/                    # LinuxServer.io 镜像
+    ├── nginx/docker-compose.yml        # Nginx
+    ├── redis/docker-compose.yml        # Redis
+    ├── code-server/docker-compose.yml  # VS Code Web
+    ├── syncthing/docker-compose.yml    # 文件同步
+    ├── nextcloud/docker-compose.yml    # 私有云存储
+    ├── portainer/docker-compose.yml    # Docker管理
+    ├── uptime-kuma/docker-compose.yml  # 服务监控
+    ├── jellyfin/docker-compose.yml     # 媒体服务器
+    ├── filebrowser/docker-compose.yml  # 文件管理
+    ├── homeassistant/docker-compose.yml # 智能家居
+    ├── n8n/docker-compose.yml          # 工作流自动化
+    └── vaultwarden/docker-compose.yml  # 密码管理器
 ```
 
 ## 快速开始
@@ -235,12 +267,45 @@ docker-compose up -d
 | Gitea | 1 | 3000 | 内置: 3000 |
 | GitLab | CE | 8929 | 内置: 8929 |
 
+### LinuxServer.io / Home Lab
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| Code Server | 8443 | VS Code Web版 |
+| Syncthing | 8384 | 文件同步 |
+| Nextcloud | 444 | 私有云存储 |
+| Portainer | 9000 | Docker管理界面 |
+| Uptime Kuma | 3001 | 服务监控 |
+| Jellyfin | 8096 | 媒体服务器 |
+| FileBrowser | 8085 | Web文件管理 |
+| Home Assistant | 8123 | 智能家居 |
+| n8n | 5678 | 工作流自动化 |
+| Vaultwarden | 8123 | 密码管理器 |
+
 ### 其他
 | 服务 | 版本 | 端口 | 说明 |
 |------|------|------|------|
 | Imgproxy | 3 | 8080 | 图片处理 |
 | NPS | latest | 8080, 8024 | 内网穿透 |
 | RustFS | latest | 9000 | 文件系统 |
+
+## 镜像源说明
+
+| 镜像源 | 特点 | 使用场景 |
+|--------|------|----------|
+| **官方镜像** | Docker Hub 官方维护 | 默认选择 |
+| **Bitnami** | 更安全、更精简、生产级 | 生产环境 |
+| **LinuxServer.io** | 社区维护、支持PUID/PGID | 家庭服务器 |
+
+### Bitnami 镜像优势
+- 镜像更精简，安全性更高
+- 定期更新，包含安全补丁
+- 提供完整的环境变量配置
+- 生产环境推荐
+
+### LinuxServer.io 镜像优势
+- 统一的 PUID/PGID 权限管理
+- 适合 NAS 和家庭服务器
+- 活跃的社区支持
 
 ## 默认账号密码
 

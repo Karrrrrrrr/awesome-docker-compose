@@ -1,0 +1,60 @@
+version: '3.8'
+
+# Bitnami MongoDB - 更安全、更精简的镜像
+services:
+  mongo:
+    image: bitnami/mongodb:7.0
+    container_name: mongo7-bitnami
+    restart: unless-stopped
+    environment:
+      # Root 用户配置
+      MONGODB_ROOT_USER: ${MONGO_ROOT_USER:-root}
+      MONGODB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-root123456}
+      # 数据库配置
+      MONGODB_DATABASE: ${MONGO_DATABASE:-app}
+      MONGODB_USERNAME: ${MONGO_USER:-app}
+      MONGODB_PASSWORD: ${MONGO_PASSWORD:-app123456}
+      # 副本集配置 (单节点)
+      MONGODB_REPLICA_SET_MODE: primary
+      MONGODB_REPLICA_SET_NAME: rs0
+      # 性能配置
+      MONGODB_ENABLE_JOURNAL: "true"
+      MONGODB_DISABLE_SYSTEM_LOG: "false"
+      MONGODB_SYSTEM_LOG_VERBOSITY: "0"
+      TZ: Asia/Shanghai
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    volumes:
+      - mongo_data:/bitnami/mongodb
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mongo_network
+
+  # Mongo Express
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo7-express-bitnami
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USER:-root}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD:-root123456}
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_ROOT_USER:-root}:${MONGO_ROOT_PASSWORD:-root123456}@mongo:27017/
+    ports:
+      - "${MONGO_EXPRESS_PORT:-8081}:8081"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - mongo_network
+
+volumes:
+  mongo_data:
+    driver: local
+
+networks:
+  mongo_network:
+    driver: bridge

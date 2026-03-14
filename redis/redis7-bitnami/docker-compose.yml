@@ -1,0 +1,55 @@
+version: '3.8'
+
+# Bitnami Redis - 更安全、更精简的镜像
+services:
+  redis:
+    image: bitnami/redis:7.2
+    container_name: redis7-bitnami
+    restart: unless-stopped
+    environment:
+      # 密码认证
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis123456}
+      # 禁用 ACL 文件 (简化配置)
+      REDIS_ACLFILE: ""
+      # AOF 持久化
+      REDIS_AOF_ENABLED: "yes"
+      # RDB 快照配置
+      REDIS_DISABLE_COMMANDS: "FLUSHDB,FLUSHALL"
+      # 性能配置
+      REDIS_MAXMEMORY: 256mb
+      REDIS_MAXMEMORY_POLICY: allkeys-lru
+      TZ: Asia/Shanghai
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/bitnami/redis/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis123456}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - redis_network
+
+  # Redis Commander - 管理界面
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: redis7-commander-bitnami
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379:${REDIS_PASSWORD:-redis123456}
+    ports:
+      - "${REDIS_COMMANDER_PORT:-8081}:8081"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - redis_network
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  redis_network:
+    driver: bridge

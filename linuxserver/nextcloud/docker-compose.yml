@@ -1,0 +1,56 @@
+version: '3.8'
+
+# LinuxServer.io Nextcloud - 私有云存储
+services:
+  nextcloud-db:
+    image: lscr.io/linuxserver/mariadb:latest
+    container_name: nextcloud-db
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123456}
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-nextcloud123456}
+    volumes:
+      - nextcloud_db:/config
+    networks:
+      - nextcloud_network
+
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: Asia/Shanghai
+      # 数据库配置
+      DB_HOST: nextcloud-db
+      DB_USER: nextcloud
+      DB_PASS: ${MYSQL_PASSWORD:-nextcloud123456}
+      DB_NAME: nextcloud
+      # 管理员配置 (首次启动)
+      NEXTCLOUD_ADMIN_USER: ${ADMIN_USER:-admin}
+      NEXTCLOUD_ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123456}
+      # 信任的域名
+      NEXTCLOUD_TRUSTED_DOMAINS: ${DOMAIN:-localhost}
+    ports:
+      - "${NEXTCLOUD_PORT:-444}:443"
+    volumes:
+      - ./config:/config
+      - ./data:/data
+    depends_on:
+      - nextcloud-db
+    networks:
+      - nextcloud_network
+
+volumes:
+  nextcloud_db:
+    driver: local
+
+networks:
+  nextcloud_network:
+    driver: bridge

@@ -1,0 +1,86 @@
+version: '3.8'
+
+# Bitnami Kafka - 生产级配置
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3.9
+    container_name: zookeeper-bitnami
+    restart: unless-stopped
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+      ZOO_4LW_COMMANDS_WHITELIST: "*"
+      # 事务日志分离 (生产环境推荐)
+      ZOO_DATA_LOG_DIR: /bitnami/zookeeper/datalog
+    ports:
+      - "${ZOOKEEPER_PORT:-2181}:2181"
+    volumes:
+      - zookeeper_data:/bitnami/zookeeper
+    networks:
+      - kafka_network
+
+  kafka:
+    image: bitnami/kafka:3.6
+    container_name: kafka3-bitnami
+    restart: unless-stopped
+    environment:
+      # Zookeeper 连接
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      # 监听器配置
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,EXTERNAL://:9094
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      # Topic 配置
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_CFG_NUM_PARTITIONS: 3
+      KAFKA_CFG_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_CFG_LOG_RETENTION_HOURS: 168
+      KAFKA_CFG_LOG_RETENTION_BYTES: 1073741824
+      # 性能配置
+      KAFKA_CFG_MESSAGE_MAX_BYTES: 10485760
+      KAFKA_CFG_REPLICA_FETCH_MAX_BYTES: 10485760
+      # JMX 监控
+      JMX_PORT: 9101
+      TZ: Asia/Shanghai
+    ports:
+      - "${KAFKA_PORT:-9092}:9092"
+      - "${KAFKA_EXTERNAL_PORT:-9094}:9094"
+      - "${KAFKA_JMX_PORT:-9101}:9101"
+    volumes:
+      - kafka_data:/bitnami/kafka
+    depends_on:
+      - zookeeper
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-broker-api-versions.sh --bootstrap-server localhost:9092"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - kafka_network
+
+  # Kafka UI
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui-bitnami
+    restart: unless-stopped
+    environment:
+      KAFKA_CLUSTERS_0_NAME: bitnami-local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      KAFKA_CLUSTERS_0_METRICS_PORT: 9101
+    ports:
+      - "${KAFKA_UI_PORT:-9091}:8080"
+    depends_on:
+      - kafka
+    networks:
+      - kafka_network
+
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local
+
+networks:
+  kafka_network:
+    driver: bridge

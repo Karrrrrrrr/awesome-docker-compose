@@ -1,0 +1,33 @@
+version: '3.8'
+
+# LinuxServer.io Nginx - 带PUID/PGID支持
+services:
+  nginx:
+    image: lscr.io/linuxserver/nginx:latest
+    container_name: nginx-lsio
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: Asia/Shanghai
+    ports:
+      - "${NGINX_HTTP_PORT:-80}:80"
+      - "${NGINX_HTTPS_PORT:-443}:443"
+    volumes:
+      - ./config:/config
+      - nginx_logs:/config/log/nginx
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - nginx_network
+
+volumes:
+  nginx_logs:
+    driver: local
+
+networks:
+  nginx_network:
+    driver: bridge

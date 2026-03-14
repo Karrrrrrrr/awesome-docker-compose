@@ -1,0 +1,35 @@
+version: '3.8'
+
+# LinuxServer.io Syncthing - 文件同步
+services:
+  syncthing:
+    image: lscr.io/linuxserver/syncthing:latest
+    container_name: syncthing
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: Asia/Shanghai
+    ports:
+      - "${SYNCTHING_GUI_PORT:-8384}:8384"
+      - "${SYNCTHING_TCP_PORT:-22000}:22000"
+      - "${SYNCTHING_UDP_PORT:-22000}:22000/udp"
+      - "${SYNCTHING_DISCOVERY_PORT:-21027}:21027/udp"
+    volumes:
+      - ./config:/config
+      - ./data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8384/rest/system/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - syncthing_network
+
+volumes:
+  syncthing_data:
+    driver: local
+
+networks:
+  syncthing_network:
+    driver: bridge

@@ -1,0 +1,36 @@
+version: '3.8'
+
+# Home Assistant - 智能家居平台
+services:
+  homeassistant:
+    image: lscr.io/linuxserver/homeassistant:latest
+    container_name: homeassistant
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: Asia/Shanghai
+    ports:
+      - "${HOMEASSISTANT_PORT:-8123}:8123"
+    volumes:
+      - ./config:/config
+    # 设备访问 (可选)
+    # devices:
+    #   - /dev/ttyUSB0:/dev/ttyUSB0
+    #   - /dev/ttyACM0:/dev/ttyACM0
+    privileged: false
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ha_network
+
+volumes:
+  homeassistant_data:
+    driver: local
+
+networks:
+  ha_network:
+    driver: bridge

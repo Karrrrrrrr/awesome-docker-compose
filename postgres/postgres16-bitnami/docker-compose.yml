@@ -1,0 +1,41 @@
+version: '3.8'
+
+# Bitnami PostgreSQL - 更安全、更精简的镜像
+services:
+  postgres:
+    image: bitnami/postgresql:16
+    container_name: postgres16-bitnami
+    restart: unless-stopped
+    environment:
+      POSTGRESQL_USERNAME: ${POSTGRES_USER:-postgres}
+      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD:-postgres123456}
+      POSTGRESQL_DATABASE: ${POSTGRES_DB:-app}
+      # Bitnami 特有配置
+      POSTGRESQL_POSTGRES_PASSWORD: ${POSTGRES_ROOT_PASSWORD:-root123456}
+      POSTGRESQL_MAX_CONNECTIONS: 200
+      POSTGRESQL_SHARED_BUFFERS: 256MB
+      POSTGRESQL_WAL_LEVEL: replica
+      # 启用 pg_stat_statements
+      POSTGRESQL_PGHBA_TRUST_ALL: "no"
+      POSTGRESQL_ENABLE_TLS: "no"
+      TZ: Asia/Shanghai
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/bitnami/postgresql
+      - ./init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - postgres_network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  postgres_network:
+    driver: bridge

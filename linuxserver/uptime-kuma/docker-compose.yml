@@ -1,0 +1,29 @@
+version: '3.8'
+
+# Uptime Kuma - 服务监控
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "${UPTIME_KUMA_PORT:-3001}:3001"
+    volumes:
+      - uptime_kuma_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - uptime_network
+
+volumes:
+  uptime_kuma_data:
+    driver: local
+
+networks:
+  uptime_network:
+    driver: bridge

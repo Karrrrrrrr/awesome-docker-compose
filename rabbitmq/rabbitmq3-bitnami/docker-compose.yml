@@ -1,0 +1,44 @@
+version: '3.8'
+
+# Bitnami RabbitMQ - 更安全、更精简的镜像
+services:
+  rabbitmq:
+    image: bitnami/rabbitmq:3.12
+    container_name: rabbitmq3-bitnami
+    restart: unless-stopped
+    environment:
+      # 用户配置
+      RABBITMQ_USERNAME: ${RABBITMQ_USER:-admin}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-admin123456}
+      # 插件配置
+      RABBITMQ_PLUGINS: rabbitmq_management,rabbitmq_web_stomp,rabbitmq_mqtt
+      # Erlang Cookie (集群用)
+      RABBITMQ_ERL_COOKIE: ${RABBITMQ_ERL_COOKIE:-rabbitmq-secret-cookie}
+      # 虚拟主机
+      RABBITMQ_VHOSTS: ${RABBITMQ_VHOST:-/}
+      # 性能配置
+      RABBITMQ_VM_MEMORY_HIGH_WATERMARK: 0.6
+      RABBITMQ_DISK_FREE_LIMIT: 1GB
+      TZ: Asia/Shanghai
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"        # AMQP
+      - "${RABBITMQ_MGMT_PORT:-15672}:15672"  # Management UI
+      - "${RABBITMQ_STOMP_PORT:-61613}:61613" # STOMP
+      - "${RABBITMQ_MQTT_PORT:-1883}:1883"    # MQTT
+    volumes:
+      - rabbitmq_data:/bitnami/rabbitmq/mnesia
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - rabbitmq_network
+
+volumes:
+  rabbitmq_data:
+    driver: local
+
+networks:
+  rabbitmq_network:
+    driver: bridge

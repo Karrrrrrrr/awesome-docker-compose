@@ -1,0 +1,34 @@
+version: '3.8'
+
+# FileBrowser - Web文件管理器
+services:
+  filebrowser:
+    image: filebrowser/filebrowser:latest
+    container_name: filebrowser
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      FB_NOAUTH: "false"
+    user: "${PUID:-1000}:${PGID:-1000}"
+    ports:
+      - "${FILEBROWSER_PORT:-8085}:80"
+    volumes:
+      - ./database:/database
+      - ./config:/config
+      - ./srv:/srv
+    command: ["--root", "/srv", "--database", "/database/filebrowser.db", "--config", "/config/settings.json"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - filebrowser_network
+
+volumes:
+  filebrowser_data:
+    driver: local
+
+networks:
+  filebrowser_network:
+    driver: bridge

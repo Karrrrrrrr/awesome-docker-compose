@@ -1,0 +1,33 @@
+version: '3.8'
+
+# LinuxServer.io Code Server - VS Code Web版
+services:
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: Asia/Shanghai
+      # 密码访问
+      PASSWORD: ${CODE_PASSWORD:-code123456}
+      # 可选: 禁用密码使用反向代理认证
+      # SUDO_PASSWORD: ${SUDO_PASSWORD:-sudo123456}
+      # 默认工作目录
+      PROXY_DOMAIN: ${CODE_DOMAIN:-code.localhost}
+    ports:
+      - "${CODE_PORT:-8443}:8443"
+    volumes:
+      - ./config:/config
+      - ./projects:/config/workspace
+    networks:
+      - code_network
+
+volumes:
+  code_data:
+    driver: local
+
+networks:
+  code_network:
+    driver: bridge
