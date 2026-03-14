@@ -1,0 +1,38 @@
+version: '3.8'
+
+# Stable Diffusion WebUI - AI图像生成
+services:
+  stable-diffusion:
+    image: universallm/stable-diffusion-webui:latest
+    container_name: stable-diffusion
+    restart: unless-stopped
+    environment:
+      COMMANDLINE_ARGS: "--listen --port 7860 --xformers --enable-insecure-extension-access"
+      TZ: Asia/Shanghai
+    ports:
+      - "${SD_WEBUI_PORT:-7860}:7860"
+    volumes:
+      - sd_models:/app/models
+      - sd_outputs:/app/outputs
+      - sd_extensions:/app/extensions
+      - sd_config:/app/config
+    # GPU 支持
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    networks:
+      - sd_network
+
+volumes:
+  sd_models:
+  sd_outputs:
+  sd_extensions:
+  sd_config:
+
+networks:
+  sd_network:
+    driver: bridge

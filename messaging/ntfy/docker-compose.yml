@@ -1,0 +1,35 @@
+version: '3.8'
+
+# ntfy - 简单的推送通知服务
+services:
+  ntfy:
+    image: binwiederhier/ntfy:latest
+    container_name: ntfy
+    restart: unless-stopped
+    command: serve
+    environment:
+      NTFY_BASE_URL: ${NTFY_BASE_URL:-http://localhost:8080}
+      NTFY_CACHE_FILE: /var/cache/ntfy/cache.db
+      NTFY_AUTH_FILE: /var/lib/ntfy/user.db
+      NTFY_AUTH_DEFAULT_ACCESS: read-write
+      TZ: Asia/Shanghai
+    ports:
+      - "${NTFY_PORT:-8080}:80"
+    volumes:
+      - ntfy_cache:/var/cache/ntfy
+      - ntfy_lib:/var/lib/ntfy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ntfy_network
+
+volumes:
+  ntfy_cache:
+  ntfy_lib:
+
+networks:
+  ntfy_network:
+    driver: bridge

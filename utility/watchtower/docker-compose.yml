@@ -1,0 +1,36 @@
+version: '3.8'
+
+# Watchtower - 自动更新容器
+services:
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    environment:
+      # 检查间隔 (秒)
+      WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_INTERVAL:-86400}
+      # 定时检查 (cron格式)
+      # WATCHTOWER_SCHEDULE: "0 0 4 * * *"
+      # 清理旧镜像
+      WATCHTOWER_CLEANUP: "true"
+      # 包含停止的容器
+      WATCHTOWER_INCLUDE_STOPPED: "false"
+      # 监视特定容器 (逗号分隔)
+      # WATCHTOWER_MONITOR_ONLY: "container1,container2"
+      # 通知配置 (可选)
+      WATCHTOWER_NOTIFICATIONS: "email"
+      WATCHTOWER_NOTIFICATION_EMAIL_FROM: ${EMAIL_FROM:-}
+      WATCHTOWER_NOTIFICATION_EMAIL_TO: ${EMAIL_TO:-}
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER: ${SMTP_SERVER:-}
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT: ${SMTP_PORT:-587}
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER: ${SMTP_USER:-}
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD: ${SMTP_PASSWORD:-}
+      TZ: Asia/Shanghai
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - watchtower_network
+
+networks:
+  watchtower_network:
+    driver: bridge

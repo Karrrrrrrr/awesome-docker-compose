@@ -1,0 +1,72 @@
+version: '3.8'
+
+# Penpot - 设计协作平台
+services:
+  penpot-frontend:
+    image: penpotapp/frontend:latest
+    container_name: penpot-frontend
+    restart: unless-stopped
+    environment:
+      PENPOT_FLAGS: enable-registration enable-login enable-smtp
+      PENPOT_PUBLIC_URI: ${PENPOT_PUBLIC_URI:-http://localhost:9001}
+      PENPOT_API_URI: http://penpot-backend:6060/api
+    ports:
+      - "${PENPOT_PORT:-9001}:80"
+    depends_on:
+      - penpot-backend
+    networks:
+      - penpot_network
+
+  penpot-backend:
+    image: penpotapp/backend:latest
+    container_name: penpot-backend
+    restart: unless-stopped
+    environment:
+      PENPOT_FLAGS: enable-registration enable-login enable-smtp
+      PENPOT_PUBLIC_URI: ${PENPOT_PUBLIC_URI:-http://localhost:9001}
+      PENPOT_DATABASE_URI: postgresql://penpot:penpot123456@penpot-db:5432/penpot
+      PENPOT_DATABASE_USERNAME: penpot
+      PENPOT_DATABASE_PASSWORD: penpot123456
+      PENPOT_REDIS_URI: redis://penpot-redis/0
+      PENPOT_ASSETS_STORAGE_BACKEND: assets-fs
+      PENPOT_STORAGE_ASSETS_FS_DIRECTORY: /opt/data/assets
+      PENPOT_TELEMETRY_ENABLED: "false"
+      TZ: Asia/Shanghai
+    volumes:
+      - penpot_data:/opt/data
+    depends_on:
+      - penpot-db
+      - penpot-redis
+    networks:
+      - penpot_network
+
+  penpot-db:
+    image: postgres:15-alpine
+    container_name: penpot-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: penpot
+      POSTGRES_PASSWORD: penpot123456
+      POSTGRES_DB: penpot
+    volumes:
+      - penpot_db_data:/var/lib/postgresql/data
+    networks:
+      - penpot_network
+
+  penpot-redis:
+    image: redis:7-alpine
+    container_name: penpot-redis
+    restart: unless-stopped
+    volumes:
+      - penpot_redis_data:/data
+    networks:
+      - penpot_network
+
+volumes:
+  penpot_data:
+  penpot_db_data:
+  penpot_redis_data:
+
+networks:
+  penpot_network:
+    driver: bridge

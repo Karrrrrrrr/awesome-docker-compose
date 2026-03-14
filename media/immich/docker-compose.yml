@@ -1,0 +1,100 @@
+version: '3.8'
+
+# Immich - 照片和视频管理
+services:
+  immich-server:
+    image: ghcr.io/immich-app/immich-server:latest
+    container_name: immich-server
+    restart: unless-stopped
+    environment:
+      DB_DATABASE_NAME: immich
+      DB_USERNAME: postgres
+      DB_PASSWORD: immich123456
+      DB_HOSTNAME: immich-db
+      REDIS_HOSTNAME: immich-redis
+      TZ: Asia/Shanghai
+    ports:
+      - "${IMMICH_SERVER_PORT:-3001}:3001"
+    volumes:
+      - ./upload:/usr/src/app/upload
+      - ./photos:/usr/src/app/photos
+    depends_on:
+      - immich-db
+      - immich-redis
+    networks:
+      - immich_network
+
+  immich-microservices:
+    image: ghcr.io/immich-app/immich-server:latest
+    container_name: immich-microservices
+    restart: unless-stopped
+    environment:
+      DB_DATABASE_NAME: immich
+      DB_USERNAME: postgres
+      DB_PASSWORD: immich123456
+      DB_HOSTNAME: immich-db
+      REDIS_HOSTNAME: immich-redis
+      TZ: Asia/Shanghai
+    command: ["/bin/sh", "./start-microservices.sh"]
+    volumes:
+      - ./upload:/usr/src/app/upload
+    depends_on:
+      - immich-db
+      - immich-redis
+    networks:
+      - immich_network
+
+  immich-web:
+    image: ghcr.io/immich-app/immich-web:latest
+    container_name: immich-web
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "${IMMICH_WEB_PORT:-2283}:3000"
+    depends_on:
+      - immich-server
+    networks:
+      - immich_network
+
+  immich-db:
+    image: postgres:14-alpine
+    container_name: immich-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: immich123456
+      POSTGRES_USER: postgres
+      POSTGRES_DB: immich
+    volumes:
+      - immich_db_data:/var/lib/postgresql/data
+    networks:
+      - immich_network
+
+  immich-redis:
+    image: redis:6-alpine
+    container_name: immich-redis
+    restart: unless-stopped
+    networks:
+      - immich_network
+
+  # Immich Proxy (可选，统一入口)
+  immich-proxy:
+    image: nginx:alpine
+    container_name: immich-proxy
+    restart: unless-stopped
+    ports:
+      - "${IMMICH_PORT:-2283}:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - immich-server
+      - immich-web
+    networks:
+      - immich_network
+
+volumes:
+  immich_db_data:
+
+networks:
+  immich_network:
+    driver: bridge

@@ -1,0 +1,23 @@
+version: '3.8'
+
+# HTTPBin - HTTP请求测试服务
+services:
+  httpbin:
+    image: kennethreitz/httpbin:latest
+    container_name: httpbin
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "${HTTPBIN_PORT:-8080}:80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/status/200"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - httpbin_network
+
+networks:
+  httpbin_network:
+    driver: bridge

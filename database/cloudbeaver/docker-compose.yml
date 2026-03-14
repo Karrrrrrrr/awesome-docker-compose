@@ -1,0 +1,31 @@
+version: '3.8'
+
+# CloudBeaver - 企业级数据库管理
+services:
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    container_name: cloudbeaver
+    restart: unless-stopped
+    environment:
+      CB_ADMIN_NAME: ${CB_ADMIN_NAME:-admin}
+      CB_ADMIN_PASSWORD: ${CB_ADMIN_PASSWORD:-admin123456}
+      TZ: Asia/Shanghai
+    ports:
+      - "${CLOUDBEAVER_PORT:-8978}:8978"
+    volumes:
+      - cloudbeaver_data:/opt/cloudbeaver/workspace
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8978/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - cloudbeaver_network
+
+volumes:
+  cloudbeaver_data:
+    driver: local
+
+networks:
+  cloudbeaver_network:
+    driver: bridge

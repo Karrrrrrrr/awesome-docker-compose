@@ -1,0 +1,25 @@
+version: '3.8'
+
+# Adminer - 轻量级数据库管理
+services:
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    restart: unless-stopped
+    environment:
+      ADMINER_DESIGN: nette
+      ADMINER_PLUGINS: tables-filter tinymce
+      TZ: Asia/Shanghai
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - adminer_network
+
+networks:
+  adminer_network:
+    driver: bridge

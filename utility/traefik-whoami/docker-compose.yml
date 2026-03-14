@@ -1,0 +1,23 @@
+version: '3.8'
+
+# Traefik Whoami - 测试服务
+services:
+  whoami:
+    image: traefik/whoami:latest
+    container_name: whoami
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "${WHOAMI_PORT:-8080}:80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - whoami_network
+
+networks:
+  whoami_network:
+    driver: bridge

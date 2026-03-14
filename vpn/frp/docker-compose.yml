@@ -1,0 +1,27 @@
+version: '3.8'
+
+# FRP (Fast Reverse Proxy) - 内网穿透
+services:
+  # FRP 服务端
+  frps:
+    image: snowdreamtech/frps:latest
+    container_name: frps
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./frps.toml:/etc/frp/frps.toml:ro
+    command: -c /etc/frp/frps.toml
+
+  # FRP 客户端 (可选)
+  # frpc:
+  #   image: snowdreamtech/frpc:latest
+  #   container_name: frpc
+  #   restart: unless-stopped
+  #   network_mode: host
+  #   environment:
+  #     TZ: Asia/Shanghai
+  #   volumes:
+  #     - ./frpc.toml:/etc/frp/frpc.toml:ro
+  #   command: -c /etc/frp/frpc.toml

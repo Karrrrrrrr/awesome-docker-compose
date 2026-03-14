@@ -145,6 +145,51 @@ awesome-docker-compose/
     ├── homeassistant/docker-compose.yml # 智能家居
     ├── n8n/docker-compose.yml          # 工作流自动化
     └── vaultwarden/docker-compose.yml  # 密码管理器
+│
+├── monitoring/                   # 监控服务
+│   ├── prometheus-grafana/        # Prometheus + Grafana
+│   ├── dozzle/                    # Docker日志查看
+│   ├── loki/                      # 日志聚合
+│   └── promtail/                  # 日志收集代理
+│
+├── ci-cd/                        # CI/CD
+│   ├── jenkins/                   # Jenkins
+│   └── drone/                     # Drone CI
+│
+├── utility/                      # 实用工具
+│   ├── watchtower/               # 自动更新容器
+│   ├── it-tools/                 # IT工具集
+│   ├── memos/                    # 笔记
+│   ├── outline/                  # 知识库Wiki
+│   ├── trilium/                  # 知识管理
+│   ├── traefik-whoami/            # 测试服务
+│   └── httpbin/                   # HTTP测试
+│
+├── ai/                           # AI服务
+│   ├── ollama/                   # 本地LLM
+│   └── stable-diffusion/          # AI图像生成
+│
+├── vpn/                          # VPN/内网穿透
+│   ├── wireguard/                # Wireguard VPN
+│   └── frp/                      # FRP内网穿透
+│
+├── messaging/                    # 消息推送
+│   ├── gotify/                   # Gotify
+│   └── ntfy/                     # ntfy
+│
+├── database/                     # 数据库工具
+│   ├── adminer/                  # Adminer
+│   ├── cloudbeaver/              # CloudBeaver
+│   └── pgweb/                    # pgweb
+│
+├── design/                       # 设计工具
+│   ├── penpot/                   # 设计协作
+│   └── excalidraw/               # 白板绘图
+│
+└── media/                       # 媒体服务
+    ├── photoprism/               # 照片管理
+    ├── immich/                   # 照片视频管理
+    └── navidrome/                # 视频监控NVR
 ```
 
 ## 快速开始
@@ -280,6 +325,72 @@ docker-compose up -d
 | Home Assistant | 8123 | 智能家居 |
 | n8n | 5678 | 工作流自动化 |
 | Vaultwarden | 8123 | 密码管理器 |
+
+### 监控/可观测性
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| Prometheus | 9090 | 监控系统 |
+| Grafana | 3000 | 可视化面板 |
+| Dozzle | 9999 | Docker日志查看 |
+| Loki | 3100 | 日志聚合 |
+| Promtail | 9080 | 日志收集 |
+
+### CI/CD
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| Jenkins | 8080 | CI/CD服务器 |
+| Drone CI | 80 | 轻量级CI/CD |
+
+### AI/LLM
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| Ollama | 11434 | 本地LLM运行 |
+| Open WebUI | 3000 | LLM Web界面 |
+| Stable Diffusion | 7860 | AI图像生成 |
+
+### VPN/内网穿透
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| Wireguard | 51820 | VPN服务 |
+| FRP | 7000, 7500 | 内网穿透 |
+
+### 消息推送
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| Gotify | 8080 | 消息推送 |
+| ntfy | 8080 | 推送通知 |
+
+### 数据库工具
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| Adminer | 8080 | 轻量级数据库管理 |
+| CloudBeaver | 8978 | 企业级数据库管理 |
+| pgweb | 8081 | PostgreSQL Web管理 |
+
+### 设计工具
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| Penpot | 9001 | 设计协作平台 |
+| Excalidraw | 8080 | 白板绘图 |
+
+### 媒体服务
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| PhotoPrism | 2342 | 照片管理 |
+| Immich | 2283 | 照片视频管理 |
+| Navirome | 3443 | 视频监控NVR |
+
+### 实用工具
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| Watchtower | - | 自动更新容器 |
+| IT-Tools | 8080 | IT工具集 |
+| Memos | 5230 | 备忘录 |
+| Outline | 3000 | 知识库Wiki |
+| Trilium | 8080 | 知识管理 |
+| Hoppscotch | 3000 | API测试 |
+| HTTPBin | 8080 | HTTP测试 |
+| Whoami | 8080 | 测试服务 |
 
 ### 其他
 | 服务 | 版本 | 端口 | 说明 |

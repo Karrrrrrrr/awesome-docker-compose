@@ -1,0 +1,32 @@
+version: '3.8'
+
+# Outline - 知识库Wiki
+services:
+  outline:
+    image: outlinewiki/outline:latest
+    container_name: outline
+    restart: unless-stopped
+    environment:
+      # 使用 Yarn 配置，      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: Asia/Shanghai
+    ports:
+      - "${OUTLINE_PORT:-3000}:3000"
+    volumes:
+      - ./config:/opt/outline
+      - ./data:/var/lib/outline/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/_health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - outline_network
+
+volumes:
+  outline_data:
+    driver: local
+
+networks:
+  outline_network:
+    driver: bridge

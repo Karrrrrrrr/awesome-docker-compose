@@ -1,0 +1,30 @@
+version: '3.8'
+
+# Trilium Notes - 知识管理/笔记
+services:
+  trilium:
+    image: zadam/trilium:latest
+    container_name: trilium
+    restart: unless-stopped
+    environment:
+      TRILIUM_DATA_DIR: /data
+      TZ: Asia/Shanghai
+    ports:
+      - "${TRILIUM_PORT:-8080}:8080"
+    volumes:
+      - trilium_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health-check"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - trilium_network
+
+volumes:
+  trilium_data:
+    driver: local
+
+networks:
+  trilium_network:
+    driver: bridge

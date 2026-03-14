@@ -1,0 +1,37 @@
+version: '3.8'
+
+# Gotify - 消息推送服务
+services:
+  gotify:
+    image: gotify/server:latest
+    container_name: gotify
+    restart: unless-stopped
+    environment:
+      GOTIFY_SERVER_SSL_ENABLED: "false"
+      GOTIFY_SERVER_SSL_REDIRECTTOHTTPS: "false"
+      GOTIFY_SERVER_RESPONSEHEADEREXPIRE: "2592000"
+      GOTIFY_DATABASE_DIALECT: sqlite3
+      GOTIFY_DATABASE_CONNECTION: /app/data/gotify.db
+      GOTIFY_DEFAULTUSER_NAME: ${GOTIFY_USER:-admin}
+      GOTIFY_DEFAULTUSER_PASS: ${GOTIFY_PASSWORD:-admin123456}
+      GOTIFY_PASSSTRENGTH: 10
+      TZ: Asia/Shanghai
+    ports:
+      - "${GOTIFY_PORT:-8080}:80"
+    volumes:
+      - gotify_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/currentUser"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - gotify_network
+
+volumes:
+  gotify_data:
+    driver: local
+
+networks:
+  gotify_network:
+    driver: bridge

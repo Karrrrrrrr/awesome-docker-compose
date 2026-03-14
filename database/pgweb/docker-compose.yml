@@ -1,0 +1,26 @@
+version: '3.8'
+
+# pgweb - PostgreSQL Web管理界面
+services:
+  pgweb:
+    image: sosedoff/pgweb:latest
+    container_name: pgweb
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgres://postgres:5432/postgres?sslmode=disable}
+      TZ: Asia/Shanghai
+    ports:
+      - "${PGWEB_PORT:-8081}:8081"
+    depends_on:
+      - postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - pgweb_network
+
+networks:
+  pgweb_network:
+    driver: bridge

@@ -1,0 +1,31 @@
+version: '3.8'
+
+# Dozzle - 轻量级Docker日志查看器
+services:
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    restart: unless-stopped
+    environment:
+      DOZZLE_LEVEL: info
+      DOZZLE_TAILSIZE: 300
+      DOZZLE_FILTER: ""
+      # 基础认证 (可选)
+      DOZZLE_USERNAME: ${DOZZLE_USER:-admin}
+      DOZZLE_PASSWORD: ${DOZZLE_PASSWORD:-admin123456}
+      TZ: Asia/Shanghai
+    ports:
+      - "${DOZZLE_PORT:-9999}:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    healthcheck:
+      test: ["CMD", "/dozzle", "healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - dozzle_network
+
+networks:
+  dozzle_network:
+    driver: bridge

@@ -1,0 +1,48 @@
+version: '3.8'
+
+# Hoppscotch - API测试工具
+services:
+  hoppscotch:
+    image: hoppscotch/hoppscotch:latest
+    container_name: hoppscotch
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      # 数据库配置
+      DATABASE_URL: postgresql://postgres:hoppscotch123456@hoppscotch-db:5432/hoppscotch
+      # 认证配置
+      JWT_SECRET: ${JWT_SECRET:-hoppscotch-jwt-secret}
+      MAGIC_LINK_TOKEN_SECRET: ${MAGIC_LINK_SECRET:-hoppscotch-magic-link-secret}
+      # 邮件配置 (可选)
+      # SMTP_HOST: smtp.example.com
+      # SMTP_PORT: 587
+      # SMTP_USER: user@example.com
+      # SMTP_PASS: password
+      TZ: Asia/Shanghai
+    ports:
+      - "${HOPPSCOTCH_PORT:-3000}:3000"
+    depends_on:
+      - hoppscotch-db
+    networks:
+      - hoppscotch_network
+
+  hoppscotch-db:
+    image: postgres:15-alpine
+    container_name: hoppscotch-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: hoppscotch123456
+      POSTGRES_DB: hoppscotch
+    volumes:
+      - hoppscotch_db_data:/var/lib/postgresql/data
+    networks:
+      - hoppscotch_network
+
+volumes:
+  hoppscotch_db_data:
+
+networks:
+  hoppscotch_network:
+    driver: bridge

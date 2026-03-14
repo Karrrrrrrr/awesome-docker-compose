@@ -1,0 +1,29 @@
+version: '3.8'
+
+# Memos - 笔记和知识库
+services:
+  memos:
+    image: neosmemo/memos:latest
+    container_name: memos
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "${MEMOS_PORT:-5230}:5230"
+    volumes:
+      - memos_data:/var/opt/memos
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5230/api/v1/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - memos_network
+
+volumes:
+  memos_data:
+    driver: local
+
+networks:
+  memos_network:
+    driver: bridge

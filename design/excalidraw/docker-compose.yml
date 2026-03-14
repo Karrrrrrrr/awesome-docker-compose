@@ -1,0 +1,23 @@
+version: '3.8'
+
+# Excalidraw - 手绘风格白板
+services:
+  excalidraw:
+    image: excalidraw/excalidraw:latest
+    container_name: excalidraw
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "${EXCALIDRAW_PORT:-8080}:80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - excalidraw_network
+
+networks:
+  excalidraw_network:
+    driver: bridge

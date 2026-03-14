@@ -1,0 +1,54 @@
+version: '3.8'
+
+# PhotoPrism - 照片管理
+services:
+  photoprism:
+    image: photoprism/photoprism:latest
+    container_name: photoprism
+    restart: unless-stopped
+    depends_on:
+      - photoprism-db
+    environment:
+      PHOTOPRISM_ADMIN_PASSWORD: ${PHOTOPRISM_PASSWORD:-admin123456}
+      PHOTOPRISM_SITE_URL: ${PHOTOPRISM_URL:-http://localhost:2342}
+      PHOTOPRISM_ORIGINALS_LIMIT: 5000
+      PHOTOPRISM_DATABASE_DRIVER: mysql
+      PHOTOPRISM_DATABASE_SERVER: photoprism-db:3306
+      PHOTOPRISM_DATABASE_NAME: photoprism
+      PHOTOPRISM_DATABASE_USER: photoprism
+      PHOTOPRISM_DATABASE_PASSWORD: photoprism123456
+      TZ: Asia/Shanghai
+    ports:
+      - "${PHOTOPRISM_PORT:-2342}:2342"
+    volumes:
+      - ./originals:/photoprism/originals
+      - ./storage:/photoprism/storage
+      - ./import:/photoprism/import
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:2342/api/v1/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - photoprism_network
+
+  photoprism-db:
+    image: mariadb:10
+    container_name: photoprism-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: photoprism123456
+      MYSQL_DATABASE: photoprism
+      MYSQL_USER: photoprism
+      MYSQL_PASSWORD: photoprism123456
+    volumes:
+      - photoprism_db_data:/var/lib/mysql
+    networks:
+      - photoprism_network
+
+volumes:
+  photoprism_db_data:
+
+networks:
+  photoprism_network:
+    driver: bridge

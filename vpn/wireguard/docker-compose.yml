@@ -1,0 +1,35 @@
+version: '3.8'
+
+# Wireguard - VPN服务器
+services:
+  wireguard:
+    image: linuxserver/wireguard:latest
+    container_name: wireguard
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: Asia/Shanghai
+      SERVERURL: ${WIREGUARD_URL:-auto}
+      SERVERPORT: ${WIREGUARD_PORT:-51820}
+      PEERS: ${WIREGUARD_PEERS:-peer1,peer2}
+      PEERDNS: auto
+      INTERNAL_SUBNET: 10.13.13.0
+      ALLOWEDIPS: 0.0.0.0/0
+      PERSISTENTKEEPALIVE_PEERS: 25
+    ports:
+      - "${WIREGUARD_PORT:-51820}:51820/udp"
+    volumes:
+      - ./config:/config
+      - /lib/modules:/lib/modules:ro
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    networks:
+      - wireguard_network
+
+networks:
+  wireguard_network:
+    driver: bridge
