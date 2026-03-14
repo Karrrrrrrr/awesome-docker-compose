@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  consul:
+    image: consul:1.15
+    container_name: consul1
+    restart: unless-stopped
+    command: agent -server -ui -bootstrap-expect=1 -client=0.0.0.0 -datacenter=dc1
+    environment:
+      CONSUL_BIND_INTERFACE: eth0
+      CONSUL_CLIENT_INTERFACE: eth0
+      TZ: Asia/Shanghai
+    ports:
+      - "${CONSUL_HTTP_PORT:-8500}:8500"
+      - "${CONSUL_DNS_PORT:-8600}:8600/udp"
+      - "${CONSUL_GRPC_PORT:-8502}:8502"
+      - "${CONSUL_SERF_LAN_PORT:-8301}:8301"
+      - "${CONSUL_SERF_WAN_PORT:-8302}:8302"
+      - "${CONSUL_SERVER_PORT:-8300}:8300"
+    volumes:
+      - consul_data:/consul/data
+      - ./config:/consul/config:ro
+    healthcheck:
+      test: ["CMD", "consul", "members"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - consul_network
+
+volumes:
+  consul_data:
+    driver: local
+
+networks:
+  consul_network:
+    driver: bridge

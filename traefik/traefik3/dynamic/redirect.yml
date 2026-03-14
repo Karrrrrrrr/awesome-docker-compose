@@ -1,0 +1,24 @@
+# 动态配置示例
+http:
+  routers:
+    dashboard:
+      rule: "Host(`traefik.localhost`)"
+      service: api@internal
+      entryPoints:
+        - web
+
+  # HTTP到HTTPS重定向
+  # routers:
+  #   redirecttohttps:
+  #     entryPoints:
+  #       - web
+  #     middlewares:
+  #       - redirecthttps
+  #     rule: "PathPrefix(`/`)"
+  #     service: noop@internal
+  #
+  # middlewares:
+  #   redirecthttps:
+  #     redirectScheme:
+  #       scheme: https
+  #       permanent: true

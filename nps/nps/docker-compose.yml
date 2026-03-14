@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  nps:
+    image: ffdfgdfg/nps:latest
+    container_name: nps
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "${NPS_HTTP_PORT:-8080}:80"
+      - "${NPS_HTTPS_PORT:-8443}:443"
+      - "${NPS_BRIDGE_PORT:-8024}:8024"
+      - "${NPS_WEB_PORT:-8081}:8080"
+    volumes:
+      - ./conf:/conf:ro
+    command: -log_level=info
+    networks:
+      - nps_network
+
+volumes:
+  nps_conf:
+    driver: local
+
+networks:
+  nps_network:
+    driver: bridge

@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq3
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-admin123456}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-/}
+      TZ: Asia/Shanghai
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"      # AMQP
+      - "${RABBITMQ_MGMT_PORT:-15672}:15672"  # Management UI
+      - "${RABBITMQ_STOMP_PORT:-61613}:61613" # STOMP
+      - "${RABBITMQ_MQTT_PORT:-1883}:1883"    # MQTT
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - rabbitmq_network
+
+volumes:
+  rabbitmq_data:
+    driver: local
+
+networks:
+  rabbitmq_network:
+    driver: bridge

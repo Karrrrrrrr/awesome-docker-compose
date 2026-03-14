@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  nsqlookupd:
+    image: nsqio/nsq:latest
+    container_name: nsqlookupd
+    restart: unless-stopped
+    command: /nsqlookupd
+    ports:
+      - "${NSQLOOKUPD_TCP_PORT:-4160}:4160"
+      - "${NSQLOOKUPD_HTTP_PORT:-4161}:4161"
+    networks:
+      - nsq_network
+
+  nsqd:
+    image: nsqio/nsq:latest
+    container_name: nsqd
+    restart: unless-stopped
+    command: /nsqd --lookupd-tcp-address=nsqlookupd:4160 --broadcast-address=nsqd
+    ports:
+      - "${NSQD_TCP_PORT:-4150}:4150"
+      - "${NSQD_HTTP_PORT:-4151}:4151"
+    depends_on:
+      - nsqlookupd
+    networks:
+      - nsq_network
+
+  nsqadmin:
+    image: nsqio/nsq:latest
+    container_name: nsqadmin
+    restart: unless-stopped
+    command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
+    ports:
+      - "${NSQADMIN_HTTP_PORT:-4171}:4171"
+    depends_on:
+      - nsqlookupd
+    networks:
+      - nsq_network
+
+networks:
+  nsq_network:
+    driver: bridge

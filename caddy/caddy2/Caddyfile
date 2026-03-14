@@ -1,0 +1,38 @@
+# Caddyfile - Caddy 2 配置
+
+# 默认站点
+:80 {
+    root * /srv
+    file_server browse
+
+    # 日志
+    log {
+        output stdout
+        format console
+    }
+
+    # 健康检查
+    handle /health {
+        respond "healthy" 200
+    }
+}
+
+# 示例: 反向代理
+# yourdomain.com {
+#     reverse_proxy backend:8080
+#
+#     # 自动HTTPS (Caddy自动管理证书)
+#     encode gzip
+# }
+
+# 示例: API代理
+# api.yourdomain.com {
+#     reverse_proxy /api/* api-server:3000
+# }
+
+# 示例: 静态文件服务
+# static.yourdomain.com {
+#     root * /srv/static
+#     file_server
+#     encode gzip
+# }

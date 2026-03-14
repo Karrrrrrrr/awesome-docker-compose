@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  arangodb:
+    image: arangodb:3.12
+    container_name: arangodb3
+    restart: unless-stopped
+    environment:
+      ARANGO_ROOT_PASSWORD: ${ARANGO_ROOT_PASSWORD:-root123456}
+      ARANGO_STORAGE_ENGINE: rocksdb
+      TZ: Asia/Shanghai
+    ports:
+      - "${ARANGO_PORT:-8529}:8529"
+    volumes:
+      - arangodb_data:/var/lib/arangodb3
+      - arangodb_apps:/var/lib/arangodb3-apps
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8529/_api/version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - arangodb_network
+
+volumes:
+  arangodb_data:
+    driver: local
+  arangodb_apps:
+    driver: local
+
+networks:
+  arangodb_network:
+    driver: bridge

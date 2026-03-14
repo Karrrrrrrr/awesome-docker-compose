@@ -2,12 +2,17 @@
 # Awesome Docker Compose Starter
 # 集成常用服务的开发环境
 # ==============================================================================
+# 目录结构说明:
+#   每个服务按版本独立目录，例如:
+#   - mysql/mysql8/docker-compose.yml    (MySQL 8.0)
+#   - mysql/mysql5/docker-compose.yml    (MySQL 5.7)
+#   - redis/redis7/docker-compose.yml    (Redis 7)
+#   - redis/redis-cluster/docker-compose.yml (Redis Cluster)
+#
 # 使用方法:
-#   启动所有服务: docker-compose up -d
-#   启动指定服务: docker-compose up -d mysql redis
-#   查看服务状态: docker-compose ps
-#   停止所有服务: docker-compose down
-#   停止并删除数据: docker-compose down -v
+#   主文件(所有服务): docker-compose --profile full up -d
+#   单独服务: cd mysql/mysql8 && docker-compose up -d
+#   按类别启动: docker-compose --profile database up -d
 # ==============================================================================
 
 version: '3.8'
