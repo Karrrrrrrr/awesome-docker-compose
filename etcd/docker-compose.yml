@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  etcd:
+    image: bitnami/etcd:3.5
+    container_name: etcd
+    restart: unless-stopped
+    environment:
+      ALLOW_NONE_AUTHENTICATION: "yes"
+      ETCD_ADVERTISE_CLIENT_URLS: http://etcd:2379
+      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+      ETCD_NAME: etcd
+      TZ: Asia/Shanghai
+    ports:
+      - "${ETCD_CLIENT_PORT:-2379}:2379"
+      - "${ETCD_PEER_PORT:-2380}:2380"
+    volumes:
+      - etcd_data:/bitnami/etcd
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - etcd_network
+
+  # etcdkeeper - etcd Web UI
+  etcdkeeper:
+    image: evildecay/etcdkeeper:latest
+    container_name: etcdkeeper
+    restart: unless-stopped
+    environment:
+      ETCD_HOST: etcd:2379
+    ports:
+      - "${ETCDKEEPER_PORT:-8080}:8080"
+    depends_on:
+      etcd:
+        condition: service_healthy
+    networks:
+      - etcd_network
+
+volumes:
+  etcd_data:
+    driver: local
+
+networks:
+  etcd_network:
+    driver: bridge

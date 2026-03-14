@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  emqx:
+    image: emqx/emqx:5
+    container_name: emqx
+    restart: unless-stopped
+    environment:
+      EMQX_NAME: emqx
+      EMQX_HOST: 0.0.0.0
+      EMQX_DASHBOARD__DEFAULT_USERNAME: ${EMQX_USER:-admin}
+      EMQX_DASHBOARD__DEFAULT_PASSWORD: ${EMQX_PASSWORD:-admin123456}
+      TZ: Asia/Shanghai
+    ports:
+      - "${EMQX_MQTT_PORT:-1883}:1883"      # MQTT
+      - "${EMQX_MQTTS_PORT:-8883}:8883"    # MQTTS
+      - "${EMQX_WS_PORT:-8083}:8083"       # WebSocket
+      - "${EMQX_WSS_PORT:-8084}:8084"      # WebSocket Secure
+      - "${EMQX_DASHBOARD_PORT:-18083}:18083"  # Dashboard
+      - "${EMQX_API_PORT:-8081}:8081"      # Management API
+    volumes:
+      - emqx_data:/opt/emqx/data
+      - emqx_log:/opt/emqx/log
+      - ./emqx.conf:/opt/emqx/etc/emqx.conf:ro
+    healthcheck:
+      test: ["CMD", "emqx", "ctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - emqx_network
+
+volumes:
+  emqx_data:
+    driver: local
+  emqx_log:
+    driver: local
+
+networks:
+  emqx_network:
+    driver: bridge

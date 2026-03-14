@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  imgproxy:
+    image: darthsim/imgproxy:latest
+    container_name: imgproxy
+    restart: unless-stopped
+    environment:
+      IMGPROXY_BIND: ":8080"
+      IMGPROXY_LOCAL_FILESYSTEM_ROOT: /images
+      IMGPROXY_USE_ETAG: "true"
+      IMGPROXY_ENABLE_WEBP_DETECTION: "true"
+      IMGPROXY_MAX_SRC_FILE_SIZE: 50000000
+      IMGPROXY_MAX_SRC_RESOLUTION: 50
+      # Security
+      IMGPROXY_SECRET: ${IMGPROXY_SECRET:-imgproxy-secret}
+      IMGPROXY_ALLOW_ORIGIN: "*"
+      TZ: Asia/Shanghai
+    ports:
+      - "${IMGPROXY_PORT:-8080}:8080"
+    volumes:
+      - imgproxy_images:/images:ro
+    healthcheck:
+      test: ["CMD", "imgproxy", "health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - imgproxy_network
+
+volumes:
+  imgproxy_images:
+    driver: local
+
+networks:
+  imgproxy_network:
+    driver: bridge

@@ -1,0 +1,12 @@
+
+node_modules
+
+protoc-gen-demo
+
+.idea
+gen
+app
+/enums
+
+*.log
+*.exe

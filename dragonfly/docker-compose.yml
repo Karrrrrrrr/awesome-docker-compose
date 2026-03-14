@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  dragonfly:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:latest
+    container_name: dragonfly
+    restart: unless-stopped
+    environment:
+      DFLY_requirepass: ${DRAGONFLY_PASSWORD:-dragonfly123456}
+      TZ: Asia/Shanghai
+    ports:
+      - "${DRAGONFLY_PORT:-6379}:6379"
+    volumes:
+      - dragonfly_data:/data
+    command:
+      - "--logtostderr"
+      - "--cache_mode"
+      - "--maxmemory=256mb"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dragonfly_network
+
+volumes:
+  dragonfly_data:
+    driver: local
+
+networks:
+  dragonfly_network:
+    driver: bridge

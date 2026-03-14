@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab
+    restart: unless-stopped
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url '${GITLAB_EXTERNAL_URL:-http://localhost:8929}'
+        gitlab_rails['gitlab_shell_ssh_port'] = ${GITLAB_SSH_PORT:-2224}
+        gitlab_rails['initial_root_password'] = '${GITLAB_ROOT_PASSWORD:-gitlab123456}'
+        # Reduce memory usage
+        puma['worker_processes'] = 0
+        sidekiq['max_concurrency'] = 10
+        prometheus_monitoring['enable'] = false
+        grafana['enable'] = false
+      TZ: Asia/Shanghai
+    ports:
+      - "${GITLAB_HTTP_PORT:-8929}:8929"
+      - "${GITLAB_SSH_PORT:-2224}:22"
+    volumes:
+      - gitlab_config:/etc/gitlab
+      - gitlab_logs:/var/log/gitlab
+      - gitlab_data:/var/opt/gitlab
+    shm_size: '256m'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8929/-/health"]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+    networks:
+      - gitlab_network
+
+  # GitLab Runner
+  gitlab-runner:
+    image: gitlab/gitlab-runner:alpine
+    container_name: gitlab-runner
+    restart: unless-stopped
+    volumes:
+      - ./runner-config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - gitlab
+    networks:
+      - gitlab_network
+
+volumes:
+  gitlab_config:
+    driver: local
+  gitlab_logs:
+    driver: local
+  gitlab_data:
+    driver: local
+
+networks:
+  gitlab_network:
+    driver: bridge

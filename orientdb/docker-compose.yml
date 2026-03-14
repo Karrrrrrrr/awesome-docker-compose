@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  orientdb:
+    image: orientdb:3.2
+    container_name: orientdb
+    restart: unless-stopped
+    environment:
+      ORIENTDB_ROOT_PASSWORD: ${ORIENTDB_ROOT_PASSWORD:-root123456}
+      TZ: Asia/Shanghai
+    ports:
+      - "${ORIENTDB_PORT:-2424}:2424"    # Binary
+      - "${ORIENTDB_HTTP_PORT:-2480}:2480" # HTTP/Studio
+    volumes:
+      - orientdb_data:/orientdb/databases
+      - orientdb_backup:/orientdb/backup
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:2480"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - orientdb_network
+
+volumes:
+  orientdb_data:
+    driver: local
+  orientdb_backup:
+    driver: local
+
+networks:
+  orientdb_network:
+    driver: bridge

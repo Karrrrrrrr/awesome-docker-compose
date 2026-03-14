@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  nps:
+    image: ffdfgdfg/nps:latest
+    container_name: nps
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "${NPS_HTTP_PORT:-8080}:80"        # HTTP Proxy
+      - "${NPS_HTTPS_PORT:-8443}:443"      # HTTPS Proxy
+      - "${NPS_BRIDGE_PORT:-8024}:8024"    # Bridge
+      - "${NPS_WEB_PORT:-8081}:8080"       # Web UI
+    volumes:
+      - ./conf:/conf
+      - nps_data:/app/data
+    command: -conf /conf/nps.conf
+    networks:
+      - nps_network
+
+  # NPC - Client (if needed)
+  # npc:
+  #   image: ffdfgdfg/npc:latest
+  #   container_name: npc
+  #   restart: unless-stopped
+  #   command: -server=nps:8024 -vkey=<your_vkey>
+  #   networks:
+  #     - nps_network
+
+volumes:
+  nps_data:
+    driver: local
+
+networks:
+  nps_network:
+    driver: bridge
