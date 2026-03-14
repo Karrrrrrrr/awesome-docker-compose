@@ -49,6 +49,7 @@ awesome-docker-compose/
 │   └── redis-sentinel/docker-compose.yml  # Redis Sentinel (高可用)
 │
 ├── rabbitmq/
+│   ├── rabbitmq4/docker-compose.yml    # RabbitMQ 4 + Management UI
 │   ├── rabbitmq3/docker-compose.yml    # RabbitMQ 3 + Management UI
 │   └── rabbitmq3-bitnami/docker-compose.yml  # RabbitMQ 3 (Bitnami)
 │
@@ -58,6 +59,7 @@ awesome-docker-compose/
 │   └── kafka-kraft/docker-compose.yml  # Kafka KRaft模式 (无Zookeeper)
 │
 ├── elasticsearch/
+│   ├── elk/docker-compose.yml      # ELK全家桶 (ES + Logstash + Kibana + Beats)
 │   ├── es8/docker-compose.yml      # Elasticsearch 8 + Kibana
 │   └── es7/docker-compose.yml      # Elasticsearch 7 + Kibana
 │
@@ -68,13 +70,15 @@ awesome-docker-compose/
 │   └── neo4j5/docker-compose.yml   # Neo4j 5
 │
 ├── arangodb/
-│   └── arangodb3/docker-compose.yml  # ArangoDB 3
+│   ├── arangodb3/docker-compose.yml  # ArangoDB 3
+│   └── arangodb2/docker-compose.yml  # ArangoDB 2
 │
 ├── orientdb/
 │   └── orientdb3/docker-compose.yml  # OrientDB 3
 │
 ├── influxdb/
-│   └── influxdb2/docker-compose.yml  # InfluxDB 2 + Telegraf
+│   ├── influxdb2/docker-compose.yml  # InfluxDB 2 + Telegraf
+│   └── influxdb1/docker-compose.yml  # InfluxDB 1.8 + Chronograf + Kapacitor
 │
 ├── minio/
 │   └── minio/docker-compose.yml    # MinIO 对象存储
@@ -83,7 +87,8 @@ awesome-docker-compose/
 │   └── nginx/docker-compose.yml    # Nginx
 │
 ├── traefik/
-│   └── traefik3/docker-compose.yml # Traefik 3
+│   ├── traefik3/docker-compose.yml # Traefik 3
+│   └── traefik2/docker-compose.yml # Traefik 2
 │
 ├── caddy/
 │   └── caddy2/docker-compose.yml   # Caddy 2
@@ -93,7 +98,8 @@ awesome-docker-compose/
 │   └── consul-bitnami/docker-compose.yml  # Consul (Bitnami)
 │
 ├── etcd/
-│   └── etcd3/docker-compose.yml    # Etcd 3 + etcdkeeper
+│   ├── etcd3/docker-compose.yml    # Etcd 3 + etcdkeeper
+│   └── etcd2/docker-compose.yml    # Etcd 2
 │
 ├── emqx/
 │   └── emqx5/docker-compose.yml    # EMQX 5
@@ -255,7 +261,8 @@ docker-compose up -d
 ### 消息队列
 | 服务 | 版本 | 端口 | 管理界面 |
 |------|------|------|----------|
-| RabbitMQ | 3 | 5672 (AMQP) | Management: 15672 |
+| RabbitMQ | 4 | 5672 (AMQP) | Management: 15672 |
+| RabbitMQ | 3 | 5673 (AMQP) | Management: 15673 |
 | Kafka | 3 | 9092 | Kafka UI: 9091 |
 | NSQ | latest | 4150 (TCP) | Admin: 4171 |
 
@@ -276,6 +283,14 @@ docker-compose up -d
 | 服务 | 版本 | 端口 | 管理界面 |
 |------|------|------|----------|
 | InfluxDB | 2 | 8086 | 内置: 8086 |
+| InfluxDB | 1.8 | 8086 | Chronograf: 8888 |
+
+### 搜索引擎/日志
+| 服务 | 版本 | 端口 | 管理界面 |
+|------|------|------|----------|
+| Elasticsearch | 8 | 9200 | Kibana: 5601 |
+| Elasticsearch | 7 | 9201 | Kibana: 5602 |
+| ELK Stack | 8 | ES:9200, LS:5044, KB:5601 | Kibana: 5601 |
 
 ### 对象存储
 | 服务 | 版本 | 端口 | 管理界面 |

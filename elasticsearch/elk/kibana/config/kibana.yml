@@ -1,0 +1,32 @@
+server.host: "0.0.0.0"
+server.port: 5601
+server.name: "kibana"
+
+# Elasticsearch 连接
+elasticsearch.hosts: ["http://elasticsearch:9200"]
+elasticsearch.username: "kibana_system"
+elasticsearch.password: "${ELASTIC_PASSWORD}"
+
+# 国际化
+i18n.locale: "zh-CN"
+
+# 安全设置
+xpack.security.enabled: true
+xpack.security.encryptionKey: "something-at-least-32-characters-long"
+xpack.security.session.timeout: 3600000
+
+# 加密设置
+xpack.encryptedSavedObjects.encryptionKey: "something-at-least-32-characters-long"
+xpack.reporting.encryptionKey: "something-at-least-32-characters-long"
+
+# 监控
+monitoring.ui.container.elasticsearch.enabled: true
+monitoring.ui.container.logstash.enabled: true
+
+# 日志
+logging.dest: stdout
+logging.verbose: false
+
+# 性能优化
+elasticsearch.requestTimeout: 90000
+elasticsearch.shardTimeout: 0

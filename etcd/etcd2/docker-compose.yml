@@ -1,0 +1,35 @@
+version: '3.8'
+
+# Etcd v2 - 旧版本
+services:
+  etcd:
+    image: bitnami/etcd:2
+    container_name: etcd2
+    restart: unless-stopped
+    environment:
+      ALLOW_NONE_AUTHENTICATION: "yes"
+      ETCD_NAME: etcd2
+      ETCD_ADVERTISE_CLIENT_URLS: http://etcd:2379,http://localhost:2379
+      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+      ETCD_DATA_DIR: /etcd-data
+      TZ: Asia/Shanghai
+    ports:
+      - "${ETCD_CLIENT_PORT:-2380}:2379"
+      - "${ETCD_PEER_PORT:-2381}:2380"
+    volumes:
+      - etcd2_data:/etcd-data
+    healthcheck:
+      test: ["CMD", "etcdctl", "cluster-health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - etcd_network
+
+volumes:
+  etcd2_data:
+    driver: local
+
+networks:
+  etcd_network:
+    driver: bridge

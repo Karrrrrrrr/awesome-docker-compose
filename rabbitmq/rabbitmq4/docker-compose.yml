@@ -1,0 +1,41 @@
+version: '3.8'
+
+# RabbitMQ 4.x - 最新版本
+services:
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: rabbitmq4
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-admin123456}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-/}
+      RABBITMQ_NODENAME: rabbit@localhost
+      RABBITMQ_IO_THREAD_POOL_SIZE: 128
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbit consumer_prefetch 1000"
+      TZ: Asia/Shanghai
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MGMT_PORT:-15672}:15672"
+      - "${RABBITMQ_STOMP_PORT:-61613}:61613"
+      - "${RABBITMQ_MQTT_PORT:-1883}:1883"
+      - "${RABBITMQ_PROMETHEUS_PORT:-15692}:15692"
+    volumes:
+      - rabbitmq4_data:/var/lib/rabbitmq
+      - ./enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - rabbitmq_network
+
+volumes:
+  rabbitmq4_data:
+    driver: local
+
+networks:
+  rabbitmq_network:
+    driver: bridge

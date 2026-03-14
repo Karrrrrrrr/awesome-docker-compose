@@ -1,0 +1,73 @@
+version: '3.8'
+
+# InfluxDB 1.x - 经典版本 (与v2不兼容)
+services:
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb1
+    restart: unless-stopped
+    environment:
+      INFLUXDB_DB: ${INFLUXDB_DB:-telegraf}
+      INFLUXDB_ADMIN_USER: ${INFLUXDB_ADMIN_USER:-admin}
+      INFLUXDB_ADMIN_PASSWORD: ${INFLUXDB_ADMIN_PASSWORD:-admin123456}
+      INFLUXDB_USER: ${INFLUXDB_USER:-telegraf}
+      INFLUXDB_USER_PASSWORD: ${INFLUXDB_USER_PASSWORD:-telegraf123456}
+      INFLUXDB_REPORTING_DISABLED: "true"
+      INFLUXDB_HTTP_AUTH_ENABLED: "true"
+      TZ: Asia/Shanghai
+    ports:
+      - "${INFLUXDB_PORT:-8086}:8086"
+    volumes:
+      - influxdb1_data:/var/lib/influxdb
+      - ./init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "influx", "-execute", "SHOW DATABASES"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - influxdb_network
+
+  # Chronograf - InfluxDB 1.x 可视化界面
+  chronograf:
+    image: chronograf:latest
+    container_name: chronograf
+    restart: unless-stopped
+    environment:
+      INFLUXDB_URL: http://influxdb:8086
+      INFLUXDB_USERNAME: ${INFLUXDB_ADMIN_USER:-admin}
+      INFLUXDB_PASSWORD: ${INFLUXDB_ADMIN_PASSWORD:-admin123456}
+      TZ: Asia/Shanghai
+    ports:
+      - "${CHRONOGRAF_PORT:-8888}:8888"
+    depends_on:
+      - influxdb
+    networks:
+      - influxdb_network
+
+  # Kapacitor - 告警引擎
+  kapacitor:
+    image: kapacitor:latest
+    container_name: kapacitor
+    restart: unless-stopped
+    environment:
+      KAPACITOR_INFLUXDB_0_URLS_0: http://influxdb:8086
+      KAPACITOR_INFLUXDB_0_USERNAME: ${INFLUXDB_ADMIN_USER:-admin}
+      KAPACITOR_INFLUXDB_0_PASSWORD: ${INFLUXDB_ADMIN_PASSWORD:-admin123456}
+      TZ: Asia/Shanghai
+    ports:
+      - "${KAPACITOR_PORT:-9092}:9092"
+    volumes:
+      - kapacitor_data:/var/lib/kapacitor
+    depends_on:
+      - influxdb
+    networks:
+      - influxdb_network
+
+volumes:
+  influxdb1_data:
+  kapacitor_data:
+
+networks:
+  influxdb_network:
+    driver: bridge

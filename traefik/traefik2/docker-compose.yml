@@ -1,0 +1,75 @@
+version: '3.8'
+
+# Traefik 2.x - 旧版本 (与v3配置有差异)
+services:
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik2
+    restart: unless-stopped
+    command:
+      # API和Dashboard
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--api.debug=true"
+      # 入口点
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.traefik.address=:8080"
+      # HTTP到HTTPS重定向
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      # Docker provider
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=traefik_network"
+      # 文件provider
+      - "--providers.file.directory=/etc/traefik/dynamic"
+      - "--providers.file.watch=true"
+      # 日志
+      - "--log.level=INFO"
+      - "--accesslog=true"
+      - "--accesslog.filepath=/var/log/traefik/access.log"
+      # Let's Encrypt (可选)
+      # - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      # - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-admin@example.com}"
+      # - "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme.json"
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "${TRAEFIK_HTTP_PORT:-80}:80"
+      - "${TRAEFIK_HTTPS_PORT:-443}:443"
+      - "${TRAEFIK_DASHBOARD_PORT:-8080}:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./dynamic:/etc/traefik/dynamic:ro
+      - ./acme.json:/etc/traefik/acme.json
+      - traefik2_logs:/var/log/traefik
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - traefik_network
+
+  # 示例服务
+  whoami:
+    image: traefik/whoami
+    container_name: whoami-traefik2
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls=true"
+      - "traefik.http.services.whoami.loadbalancer.server.port=80"
+    networks:
+      - traefik_network
+
+volumes:
+  traefik2_logs:
+    driver: local
+
+networks:
+  traefik_network:
+    driver: bridge

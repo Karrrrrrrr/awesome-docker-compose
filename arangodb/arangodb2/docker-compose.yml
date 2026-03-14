@@ -1,0 +1,34 @@
+version: '3.8'
+
+# ArangoDB 2.x - 旧版本
+services:
+  arangodb:
+    image: arangodb:2.8
+    container_name: arangodb2
+    restart: unless-stopped
+    environment:
+      ARANGO_ROOT_PASSWORD: ${ARANGO_ROOT_PASSWORD:-root123456}
+      ARANGO_STORAGE_ENGINE: mmfiles
+      TZ: Asia/Shanghai
+    ports:
+      - "${ARANGO_PORT:-8530}:8529"
+    volumes:
+      - arangodb2_data:/var/lib/arangodb2
+      - arangodb2_apps:/var/lib/arangodb2-apps
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8529/_api/version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - arangodb_network
+
+volumes:
+  arangodb2_data:
+    driver: local
+  arangodb2_apps:
+    driver: local
+
+networks:
+  arangodb_network:
+    driver: bridge
