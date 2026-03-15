@@ -180,9 +180,12 @@ awesome-docker-compose/
 │   ├── ollama/                   # 本地LLM
 │   └── stable-diffusion/          # AI图像生成
 │
-├── vpn/                           # VPN/内网穿透
+├── vpn/                           # VPN/代理/内网穿透
 │   ├── wireguard/                # Wireguard VPN
-│   └── frp/                      # FRP内网穿透
+│   ├── frp/                      # FRP内网穿透
+│   ├── clash/                    # Clash 代理客户端
+│   ├── v2ray/                    # V2Ray 代理核心
+│   └── singbox/                  # Sing-box 通用代理平台
 │
 ├── messaging/                     # 消息推送
 │   ├── gotify/                   # Gotify
@@ -315,12 +318,15 @@ docker-compose up -d
 | Open WebUI | 3000 | LLM Web界面 |
 | Stable Diffusion | 7860 | AI图像生成 |
 
-### VPN/内网穿透
+### VPN/代理/内网穿透
 | 服务 | 端口 | 说明 |
 |------|------|------|
 | Wireguard | 51820 | VPN服务 |
 | FRP | 7000, 7500 | 内网穿透 |
 | NPS | 8080, 8024 | 内网穿透 |
+| Clash | 7890, 9090 | 代理客户端 |
+| V2Ray | 1080, 8080 | 代理核心 |
+| Sing-box | 2080 | 通用代理平台 |
 
 ### 消息推送
 | 服务 | 端口 | 说明 |

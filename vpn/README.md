@@ -1,6 +1,6 @@
-# VPN / 内网穿透
+# VPN / 代理 / 内网穿透
 
-VPN和内网穿透服务。
+VPN、代理和内网穿透服务集合。
 
 ## 服务列表
 
@@ -8,6 +8,9 @@ VPN和内网穿透服务。
 |------|------|------|------|
 | wireguard/ | Wireguard | 51820/UDP | VPN服务 |
 | frp/ | FRP | 7000, 7500 | 内网穿透 |
+| clash/ | Clash (Mihomo) | 7890, 9090 | 代理客户端 |
+| v2ray/ | V2Ray | 1080, 8080 | 代理核心 |
+| singbox/ | Sing-box | 2080 | 通用代理平台 |
 
 ## Wireguard
 
@@ -102,3 +105,63 @@ custom_domains = app.yourdomain.com
 
 - wireguard_config: Wireguard配置
 - frp_config: FRP配置
+
+## Clash (Mihomo)
+
+多协议代理客户端，支持规则分流。
+
+### 端口
+
+| 端口 | 说明 |
+|------|------|
+| 7890 | Mixed端口 (HTTP+SOCKS5) |
+| 9090 | Dashboard |
+
+### 使用
+
+1. 将配置文件放入 `./config/config.yaml`
+2. 访问 Dashboard: http://localhost:9090/ui
+
+## V2Ray
+
+多协议代理平台。
+
+### 端口
+
+| 端口 | 说明 |
+|------|------|
+| 1080 | SOCKS5 |
+| 8080 | HTTP |
+
+### 使用
+
+1. 将配置文件放入 `./config/config.json`
+2. 启动服务
+
+## Sing-box
+
+新一代通用代理平台，性能优异。
+
+### 端口
+
+| 端口 | 说明 |
+|------|------|
+| 2080 | Mixed端口 |
+
+### 支持
+
+- Shadowsocks
+- VMess / VLESS
+- Trojan
+- Hysteria
+- Wireguard
+- TUIC
+
+## 对比
+
+| 特性 | Clash | V2Ray | Sing-box |
+|------|-------|-------|----------|
+| 性能 | 高 | 中 | 最高 |
+| 规则分流 | 强 | 弱 | 强 |
+| 协议支持 | 多 | 多 | 最多 |
+| 配置难度 | 简单 | 复杂 | 中等 |
