@@ -23,7 +23,6 @@
 
 ```
 awesome-docker-compose/
-├── .env.example                    # 环境变量模板
 ├── README.md                       # 文档
 │
 ├── database/                       # 数据库
@@ -202,14 +201,13 @@ awesome-docker-compose/
 ## 快速开始
 
 ```bash
-# 复制环境变量文件
-cp .env.example .env
+# 进入服务目录
+cd database/mysql/mysql8
 
-# 编辑环境变量（可选）
+# 可选：修改 .env 文件中的配置
 vim .env
 
-# 进入服务目录启动
-cd database/mysql/mysql8
+# 启动服务
 docker-compose up -d
 ```
 
@@ -422,7 +420,7 @@ docker-compose down
 
 ## 生产环境建议
 
-1. **修改默认密码**: 复制 `.env.example` 为 `.env` 并修改所有密码
+1. **修改默认密码**: 修改各服务目录下的 `.env` 文件中的密码
 2. **配置持久化**: 确保数据卷正确映射到持久存储
 3. **资源限制**: 根据需要添加 `deploy.resources` 配置
 4. **安全配置**:
@@ -451,7 +449,7 @@ services:
 ## 常见问题
 
 ### 端口冲突
-如果默认端口被占用，修改 `.env` 文件中的端口配置，或直接进入单独服务目录修改。
+如果默认端口被占用，修改服务目录下的 `.env` 文件中的端口配置。
 
 ### 内存不足
 Elasticsearch 等服务需要较多内存，可通过 `ES_JAVA_OPTS` 调整 JVM 堆大小。
