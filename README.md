@@ -22,7 +22,6 @@
 
 ```
 awesome-docker-compose/
-├── docker-compose.yml              # 主集成文件
 ├── .env.example                    # 环境变量模板
 ├── README.md                       # 文档
 │
@@ -213,35 +212,10 @@ cp .env.example .env
 # 编辑环境变量（可选）
 vim .env
 
-# 方式1: 使用主文件启动服务组
-docker-compose --profile database up -d
-docker-compose --profile cache up -d
-docker-compose --profile full up -d
-
-# 方式2: 进入单独服务目录启动
+# 进入服务目录启动
 cd mysql/mysql8
 docker-compose up -d
 ```
-
-## 服务分组（Profiles）
-
-主 `docker-compose.yml` 使用 profiles 来分组服务：
-
-| Profile | 包含服务 |
-|---------|---------|
-| `database` | MySQL, PostgreSQL, MongoDB |
-| `cache` | Redis |
-| `mq` | RabbitMQ |
-| `kafka` | Kafka, Zookeeper |
-| `search` | Elasticsearch |
-| `storage` | MinIO |
-| `web` | Nginx, Traefik |
-| `discovery` | Consul, Etcd |
-| `timeseries` | InfluxDB |
-| `graph` | Neo4j |
-| `mqtt` | EMQX |
-| `tools` | 管理界面工具 |
-| `full` | 所有服务 |
 
 ## 服务端口一览
 
