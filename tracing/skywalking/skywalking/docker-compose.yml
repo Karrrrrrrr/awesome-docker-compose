@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  oap:
+    image: apache/skywalking-oap-server:9.7.0
+    container_name: skywalking-oap
+    restart: unless-stopped
+    environment:
+      - SW_STORAGE=h2
+      - TZ=Asia/Shanghai
+    ports:
+      - "${SKYWALKING_GRPC_PORT:-11800}:11800"
+      - "${SKYWALKING_HTTP_PORT:-12800}:12800"
+    healthcheck:
+      test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/12800"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - skywalking_network
+
+  ui:
+    image: apache/skywalking-ui:9.7.0
+    container_name: skywalking-ui
+    restart: unless-stopped
+    environment:
+      - SW_OAP_ADDRESS=http://oap:12800
+      - TZ=Asia/Shanghai
+    ports:
+      - "${SKYWALKING_UI_PORT:-8080}:8080"
+    depends_on:
+      - oap
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - skywalking_network
+
+networks:
+  skywalking_network:
+    driver: bridge

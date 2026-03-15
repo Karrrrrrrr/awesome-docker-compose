@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  seata-server:
+    image: seataio/seata-server:2.0.0
+    container_name: seata-server
+    restart: unless-stopped
+    environment:
+      - SEATA_PORT=${SEATA_PORT:-8091}
+      - SEATA_IP=0.0.0.0
+      - SEATA_CONFIG_NAME=file:/seata-server/resources/application.yml
+      - TZ=Asia/Shanghai
+    ports:
+      - "${SEATA_PORT:-8091}:8091"
+      - "${SEATA_CONSOLE_PORT:-7091}:7091"
+    volumes:
+      - seata_data:/seata-server/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7091/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - seata_network
+
+networks:
+  seata_network:
+    driver: bridge
+
+volumes:
+  seata_data:

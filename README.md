@@ -4,6 +4,7 @@
 
 ## 特点
 
+- **分类管理**: 服务按功能分类，结构清晰
 - **版本化管理**: 每个服务按版本独立目录，方便选择特定版本
 - **多版本支持**: 热门服务提供多个版本选择
 - **多镜像源**: 提供官方镜像、Bitnami、LinuxServer.io等多种选择
@@ -25,149 +26,131 @@ awesome-docker-compose/
 ├── .env.example                    # 环境变量模板
 ├── README.md                       # 文档
 │
-├── mysql/
-│   ├── mysql8/docker-compose.yml       # MySQL 8.0 + phpMyAdmin
-│   ├── mysql5/docker-compose.yml       # MySQL 5.7 + phpMyAdmin
-│   └── mysql8-bitnami/docker-compose.yml  # MySQL 8.0 (Bitnami)
+├── database/                       # 数据库
+│   ├── mysql/
+│   │   ├── mysql8/docker-compose.yml       # MySQL 8.0 + phpMyAdmin
+│   │   ├── mysql5/docker-compose.yml       # MySQL 5.7 + phpMyAdmin
+│   │   └── mysql8-bitnami/docker-compose.yml  # MySQL 8.0 (Bitnami)
+│   ├── postgres/
+│   │   ├── postgres16/docker-compose.yml   # PostgreSQL 16 + pgAdmin
+│   │   ├── postgres14/docker-compose.yml   # PostgreSQL 14
+│   │   └── postgres16-bitnami/docker-compose.yml  # PostgreSQL 16 (Bitnami)
+│   ├── mongo/
+│   │   ├── mongo7/docker-compose.yml       # MongoDB 7 + Mongo Express
+│   │   ├── mongo6/docker-compose.yml       # MongoDB 6
+│   │   └── mongo7-bitnami/docker-compose.yml  # MongoDB 7 (Bitnami)
+│   ├── clickhouse/
+│   │   └── clickhouse24/docker-compose.yml  # ClickHouse 24
+│   ├── neo4j/
+│   │   └── neo4j5/docker-compose.yml   # Neo4j 5
+│   ├── arangodb/
+│   │   ├── arangodb3/docker-compose.yml  # ArangoDB 3
+│   │   └── arangodb2/docker-compose.yml  # ArangoDB 2
+│   ├── orientdb/
+│   │   └── orientdb3/docker-compose.yml  # OrientDB 3
+│   ├── influxdb/
+│   │   ├── influxdb2/docker-compose.yml  # InfluxDB 2 + Telegraf
+│   │   └── influxdb1/docker-compose.yml  # InfluxDB 1.8 + Chronograf
+│   └── adminer/                  # Adminer 数据库管理
+│       └── adminer/docker-compose.yml
 │
-├── postgres/
-│   ├── postgres16/docker-compose.yml   # PostgreSQL 16 + pgAdmin
-│   ├── postgres14/docker-compose.yml   # PostgreSQL 14
-│   └── postgres16-bitnami/docker-compose.yml  # PostgreSQL 16 (Bitnami)
+├── cache/                         # 缓存
+│   ├── redis/
+│   │   ├── redis7/docker-compose.yml       # Redis 7 + Redis Commander
+│   │   ├── redis6/docker-compose.yml       # Redis 6
+│   │   ├── redis7-bitnami/docker-compose.yml  # Redis 7 (Bitnami)
+│   │   ├── redis-cluster/docker-compose.yml   # Redis Cluster (6节点)
+│   │   └── redis-sentinel/docker-compose.yml  # Redis Sentinel (高可用)
+│   └── dragonfly/
+│       └── dragonfly/docker-compose.yml  # Dragonfly (Redis替代)
 │
-├── mongo/
-│   ├── mongo7/docker-compose.yml       # MongoDB 7 + Mongo Express
-│   ├── mongo6/docker-compose.yml       # MongoDB 6
-│   └── mongo7-bitnami/docker-compose.yml  # MongoDB 7 (Bitnami)
+├── mq/                            # 消息队列
+│   ├── rabbitmq/
+│   │   ├── rabbitmq4/docker-compose.yml    # RabbitMQ 4 + Management UI
+│   │   ├── rabbitmq3/docker-compose.yml    # RabbitMQ 3 + Management UI
+│   │   └── rabbitmq3-bitnami/docker-compose.yml  # RabbitMQ 3 (Bitnami)
+│   ├── kafka/
+│   │   ├── kafka3/docker-compose.yml       # Kafka 3 + Zookeeper + Kafka UI
+│   │   ├── kafka3-bitnami/docker-compose.yml   # Kafka 3 (Bitnami)
+│   │   └── kafka-kraft/docker-compose.yml  # Kafka KRaft模式 (无Zookeeper)
+│   ├── nsq/
+│   │   └── nsq/docker-compose.yml      # NSQ (nsqlookupd + nsqd + nsqadmin)
+│   └── emqx/
+│       └── emqx5/docker-compose.yml    # EMQX 5
 │
-├── redis/
-│   ├── redis7/docker-compose.yml       # Redis 7 + Redis Commander
-│   ├── redis6/docker-compose.yml       # Redis 6
-│   ├── redis7-bitnami/docker-compose.yml  # Redis 7 (Bitnami)
-│   ├── redis-cluster/docker-compose.yml   # Redis Cluster (6节点)
-│   └── redis-sentinel/docker-compose.yml  # Redis Sentinel (高可用)
+├── search/                        # 搜索引擎
+│   ├── elasticsearch/
+│   │   ├── elk/docker-compose.yml      # ELK全家桶 (ES + Logstash + Kibana + Beats)
+│   │   ├── es8/docker-compose.yml      # Elasticsearch 8 + Kibana
+│   │   └── es7/docker-compose.yml      # Elasticsearch 7 + Kibana
+│   └── meilisearch/
+│       └── meilisearch/docker-compose.yml  # Meilisearch
 │
-├── rabbitmq/
-│   ├── rabbitmq4/docker-compose.yml    # RabbitMQ 4 + Management UI
-│   ├── rabbitmq3/docker-compose.yml    # RabbitMQ 3 + Management UI
-│   └── rabbitmq3-bitnami/docker-compose.yml  # RabbitMQ 3 (Bitnami)
+├── web/                           # Web服务器/反向代理/API网关
+│   ├── nginx/
+│   │   └── nginx/docker-compose.yml    # Nginx
+│   ├── openresty/
+│   │   └── openresty/docker-compose.yml  # OpenResty
+│   ├── traefik/
+│   │   ├── traefik3/docker-compose.yml # Traefik 3
+│   │   └── traefik2/docker-compose.yml # Traefik 2
+│   ├── caddy/
+│   │   └── caddy2/docker-compose.yml   # Caddy 2
+│   └── kong/
+│       └── kong3/docker-compose.yml    # Kong 3 + Konga
 │
-├── kafka/
-│   ├── kafka3/docker-compose.yml       # Kafka 3 + Zookeeper + Kafka UI
-│   ├── kafka3-bitnami/docker-compose.yml   # Kafka 3 (Bitnami)
-│   └── kafka-kraft/docker-compose.yml  # Kafka KRaft模式 (无Zookeeper)
+├── discovery/                     # 服务发现
+│   ├── consul/
+│   │   ├── consul1/docker-compose.yml  # Consul 1
+│   │   └── consul-bitnami/docker-compose.yml  # Consul (Bitnami)
+│   └── etcd/
+│       ├── etcd3/docker-compose.yml    # Etcd 3 + etcdkeeper
+│       └── etcd2/docker-compose.yml    # Etcd 2
 │
-├── elasticsearch/
-│   ├── elk/docker-compose.yml      # ELK全家桶 (ES + Logstash + Kibana + Beats)
-│   ├── es8/docker-compose.yml      # Elasticsearch 8 + Kibana
-│   └── es7/docker-compose.yml      # Elasticsearch 7 + Kibana
+├── tracing/                       # 链路追踪
+│   ├── jaeger/
+│   │   └── jaeger/docker-compose.yml   # Jaeger
+│   ├── zipkin/
+│   │   └── zipkin/docker-compose.yml   # Zipkin
+│   └── skywalking/
+│       └── skywalking/docker-compose.yml  # SkyWalking APM
 │
-├── clickhouse/
-│   └── clickhouse24/docker-compose.yml  # ClickHouse 24
+├── transaction/                   # 分布式事务
+│   ├── dtm/
+│   │   └── dtm/docker-compose.yml      # DTM 分布式事务管理器
+│   └── seata/
+│       └── seata/docker-compose.yml    # Seata 分布式事务
 │
-├── neo4j/
-│   └── neo4j5/docker-compose.yml   # Neo4j 5
-│
-├── arangodb/
-│   ├── arangodb3/docker-compose.yml  # ArangoDB 3
-│   └── arangodb2/docker-compose.yml  # ArangoDB 2
-│
-├── orientdb/
-│   └── orientdb3/docker-compose.yml  # OrientDB 3
-│
-├── influxdb/
-│   ├── influxdb2/docker-compose.yml  # InfluxDB 2 + Telegraf
-│   └── influxdb1/docker-compose.yml  # InfluxDB 1.8 + Chronograf + Kapacitor
-│
-├── minio/
-│   └── minio/docker-compose.yml    # MinIO 对象存储
-│
-├── nginx/
-│   └── nginx/docker-compose.yml    # Nginx
-│
-├── traefik/
-│   ├── traefik3/docker-compose.yml # Traefik 3
-│   └── traefik2/docker-compose.yml # Traefik 2
-│
-├── caddy/
-│   └── caddy2/docker-compose.yml   # Caddy 2
-│
-├── consul/
-│   ├── consul1/docker-compose.yml  # Consul 1
-│   └── consul-bitnami/docker-compose.yml  # Consul (Bitnami)
-│
-├── etcd/
-│   ├── etcd3/docker-compose.yml    # Etcd 3 + etcdkeeper
-│   └── etcd2/docker-compose.yml    # Etcd 2
-│
-├── emqx/
-│   └── emqx5/docker-compose.yml    # EMQX 5
-│
-├── nsq/
-│   └── nsq/docker-compose.yml      # NSQ (nsqlookupd + nsqd + nsqadmin)
-│
-├── kong/
-│   └── kong3/docker-compose.yml    # Kong 3 + Konga
-│
-├── openresty/
-│   └── openresty/docker-compose.yml  # OpenResty
-│
-├── gitea/
-│   ├── gitea1/docker-compose.yml   # Gitea 1
-│   └── gitea1-bitnami/docker-compose.yml  # Gitea 1 (Bitnami)
-│
-├── gitlab/
-│   └── gitlab-ce/docker-compose.yml  # GitLab CE
-│
-├── imgproxy/
-│   └── imgproxy3/docker-compose.yml  # Imgproxy 3
-│
-├── nps/
-│   └── nps/docker-compose.yml      # NPS 内网穿透
-│
-├── dragonfly/
-│   └── dragonfly/docker-compose.yml  # Dragonfly (Redis替代)
-│
-├── dtm/
-│   └── dtm/docker-compose.yml      # DTM 分布式事务管理器
-│
-├── jaeger/
-│   └── jaeger/docker-compose.yml   # Jaeger 分布式链路追踪
-│
-├── rustfs/
-│   └── rustfs/docker-compose.yml   # RustFS
-│
-├── debian/
-│   └── debian12/docker-compose.yml # Debian 12
-│
-├── ubuntu/
-│   └── ubuntu22/docker-compose.yml # Ubuntu 22.04
-│
-└── linuxserver/                    # LinuxServer.io 镜像
-    ├── nginx/docker-compose.yml        # Nginx
-    ├── redis/docker-compose.yml        # Redis
-    ├── code-server/docker-compose.yml  # VS Code Web
-    ├── syncthing/docker-compose.yml    # 文件同步
-    ├── nextcloud/docker-compose.yml    # 私有云存储
-    ├── portainer/docker-compose.yml    # Docker管理
-    ├── uptime-kuma/docker-compose.yml  # 服务监控
-    ├── jellyfin/docker-compose.yml     # 媒体服务器
-    ├── filebrowser/docker-compose.yml  # 文件管理
-    ├── homeassistant/docker-compose.yml # 智能家居
-    ├── n8n/docker-compose.yml          # 工作流自动化
-    └── vaultwarden/docker-compose.yml  # 密码管理器
-│
-├── monitoring/                   # 监控服务
+├── monitoring/                    # 监控服务
 │   ├── prometheus-grafana/        # Prometheus + Grafana
 │   ├── dozzle/                    # Docker日志查看
 │   ├── loki/                      # 日志聚合
 │   └── promtail/                  # 日志收集代理
 │
-├── ci-cd/                        # CI/CD
-│   ├── jenkins/                   # Jenkins
-│   └── drone/                     # Drone CI
+├── git/                           # Git服务
+│   ├── gitea/
+│   │   ├── gitea1/docker-compose.yml   # Gitea 1
+│   │   └── gitea1-bitnami/docker-compose.yml  # Gitea 1 (Bitnami)
+│   └── gitlab/
+│       └── gitlab-ce/docker-compose.yml  # GitLab CE
 │
-├── utility/                      # 实用工具
+├── storage/                       # 对象存储
+│   ├── minio/
+│   │   └── minio/docker-compose.yml    # MinIO 对象存储
+│   └── rustfs/
+│       └── rustfs/docker-compose.yml   # RustFS
+│
+├── os/                            # 操作系统
+│   ├── debian/
+│   │   └── debian12/docker-compose.yml # Debian 12
+│   └── ubuntu/
+│       └── ubuntu22/docker-compose.yml # Ubuntu 22.04
+│
+├── utility/                       # 实用工具
+│   ├── imgproxy/
+│   │   └── imgproxy3/docker-compose.yml  # Imgproxy 3
+│   ├── nps/
+│   │   └── nps/docker-compose.yml      # NPS 内网穿透
 │   ├── watchtower/               # 自动更新容器
 │   ├── it-tools/                 # IT工具集
 │   ├── memos/                    # 笔记
@@ -176,31 +159,44 @@ awesome-docker-compose/
 │   ├── traefik-whoami/            # 测试服务
 │   └── httpbin/                   # HTTP测试
 │
-├── ai/                           # AI服务
+├── linuxserver/                   # LinuxServer.io 镜像
+│   ├── nginx/docker-compose.yml        # Nginx
+│   ├── redis/docker-compose.yml        # Redis
+│   ├── code-server/docker-compose.yml  # VS Code Web
+│   ├── syncthing/docker-compose.yml    # 文件同步
+│   ├── nextcloud/docker-compose.yml    # 私有云存储
+│   ├── portainer/docker-compose.yml    # Docker管理
+│   ├── uptime-kuma/docker-compose.yml  # 服务监控
+│   ├── jellyfin/docker-compose.yml     # 媒体服务器
+│   ├── filebrowser/docker-compose.yml  # 文件管理
+│   ├── homeassistant/docker-compose.yml # 智能家居
+│   ├── n8n/docker-compose.yml          # 工作流自动化
+│   └── vaultwarden/docker-compose.yml  # 密码管理器
+│
+├── ci-cd/                         # CI/CD
+│   ├── jenkins/                   # Jenkins
+│   └── drone/                     # Drone CI
+│
+├── ai/                            # AI服务
 │   ├── ollama/                   # 本地LLM
 │   └── stable-diffusion/          # AI图像生成
 │
-├── vpn/                          # VPN/内网穿透
+├── vpn/                           # VPN/内网穿透
 │   ├── wireguard/                # Wireguard VPN
 │   └── frp/                      # FRP内网穿透
 │
-├── messaging/                    # 消息推送
+├── messaging/                     # 消息推送
 │   ├── gotify/                   # Gotify
 │   └── ntfy/                     # ntfy
 │
-├── database/                     # 数据库工具
-│   ├── adminer/                  # Adminer
-│   ├── cloudbeaver/              # CloudBeaver
-│   └── pgweb/                    # pgweb
-│
-├── design/                       # 设计工具
+├── design/                        # 设计工具
 │   ├── penpot/                   # 设计协作
 │   └── excalidraw/               # 白板绘图
 │
-└── media/                       # 媒体服务
+└── media/                         # 媒体服务
     ├── photoprism/               # 照片管理
     ├── immich/                   # 照片视频管理
-    └── navidrome/                # 视频监控NVR
+    └── navidrome/                # 音乐流媒体
 ```
 
 ## 快速开始
@@ -213,7 +209,7 @@ cp .env.example .env
 vim .env
 
 # 进入服务目录启动
-cd mysql/mysql8
+cd database/mysql/mysql8
 docker-compose up -d
 ```
 
@@ -229,6 +225,10 @@ docker-compose up -d
 | MongoDB | 7 | 27017 | Mongo Express: 8081 |
 | MongoDB | 6 | 27018 | - |
 | ClickHouse | 24 | 8123 (HTTP), 9000 (Native) | - |
+| Neo4j | 5 | 7687 (Bolt) | HTTP: 7474 |
+| ArangoDB | 3 | 8529 | 内置: 8529 |
+| OrientDB | 3 | 2424 | HTTP: 2480 |
+| InfluxDB | 2 | 8086 | 内置: 8086 |
 
 ### 缓存
 | 服务 | 版本 | 端口 | 管理界面 |
@@ -245,49 +245,23 @@ docker-compose up -d
 | RabbitMQ | 3 | 5673 (AMQP) | Management: 15673 |
 | Kafka | 3 | 9092 | Kafka UI: 9091 |
 | NSQ | latest | 4150 (TCP) | Admin: 4171 |
+| EMQX | 5 | 1883 (MQTT), 8083 (WS) | Dashboard: 18083 |
 
 ### 搜索引擎
 | 服务 | 版本 | 端口 | 管理界面 |
 |------|------|------|----------|
 | Elasticsearch | 8 | 9200 | Kibana: 5601 |
 | Elasticsearch | 7 | 9201 | Kibana: 5602 |
-
-### 图数据库
-| 服务 | 版本 | 端口 | 管理界面 |
-|------|------|------|----------|
-| Neo4j | 5 | 7687 (Bolt) | HTTP: 7474 |
-| ArangoDB | 3 | 8529 | 内置: 8529 |
-| OrientDB | 3 | 2424 | HTTP: 2480 |
-
-### 时序数据库
-| 服务 | 版本 | 端口 | 管理界面 |
-|------|------|------|----------|
-| InfluxDB | 2 | 8086 | 内置: 8086 |
-| InfluxDB | 1.8 | 8086 | Chronograf: 8888 |
-
-### 搜索引擎/日志
-| 服务 | 版本 | 端口 | 管理界面 |
-|------|------|------|----------|
-| Elasticsearch | 8 | 9200 | Kibana: 5601 |
-| Elasticsearch | 7 | 9201 | Kibana: 5602 |
 | ELK Stack | 8 | ES:9200, LS:5044, KB:5601 | Kibana: 5601 |
+| Meilisearch | 1.6 | 7700 | 内置: 7700 |
 
-### 对象存储
-| 服务 | 版本 | 端口 | 管理界面 |
-|------|------|------|----------|
-| MinIO | latest | 9000 (API) | Console: 9001 |
-
-### Web服务器/反向代理
+### Web服务器/反向代理/API网关
 | 服务 | 版本 | HTTP | HTTPS | 管理界面 |
 |------|------|------|-------|----------|
 | Nginx | alpine | 80 | 443 | - |
+| OpenResty | alpine | 80 | 443 | - |
 | Traefik | 3 | 80 | 443 | Dashboard: 8080 |
 | Caddy | 2 | 80 | 443 | - |
-| OpenResty | alpine | 80 | 443 | - |
-
-### API网关
-| 服务 | 版本 | 端口 | 管理界面 |
-|------|------|------|----------|
 | Kong | 3 | 8000 (Proxy), 8001 (Admin) | Konga: 1337 |
 
 ### 服务发现
@@ -296,36 +270,30 @@ docker-compose up -d
 | Consul | 1 | 8500 | UI: 8500 |
 | Etcd | 3 | 2379 | etcdkeeper: 8080 |
 
-### 分布式事务/链路追踪
+### 链路追踪
+| 服务 | 版本 | 端口 | 管理界面 |
+|------|------|------|----------|
+| Jaeger | latest | 16686 (UI), 14268 (HTTP), 4317 (OTLP gRPC) | UI: 16686 |
+| Zipkin | latest | 9411 | UI: 9411 |
+| SkyWalking | 9.7 | 8080 (UI), 11800 (gRPC), 12800 (HTTP) | UI: 8080 |
+
+### 分布式事务
 | 服务 | 版本 | 端口 | 管理界面 |
 |------|------|------|----------|
 | DTM | latest | 36789 (HTTP), 36790 (gRPC) | - |
-| Jaeger | latest | 16686 (UI), 14268 (HTTP), 4317 (OTLP gRPC) | UI: 16686 |
+| Seata | 2.0 | 8091 (Server), 7091 (Console) | Console: 7091 |
 
-### MQTT
+### 对象存储
 | 服务 | 版本 | 端口 | 管理界面 |
 |------|------|------|----------|
-| EMQX | 5 | 1883 (MQTT), 8083 (WS) | Dashboard: 18083 |
+| MinIO | latest | 9000 (API) | Console: 9001 |
+| RustFS | latest | 9000 | - |
 
 ### Git服务
 | 服务 | 版本 | 端口 | 管理界面 |
 |------|------|------|----------|
 | Gitea | 1 | 3000 | 内置: 3000 |
 | GitLab | CE | 8929 | 内置: 8929 |
-
-### LinuxServer.io / Home Lab
-| 服务 | 端口 | 说明 |
-|------|------|------|
-| Code Server | 8443 | VS Code Web版 |
-| Syncthing | 8384 | 文件同步 |
-| Nextcloud | 444 | 私有云存储 |
-| Portainer | 9000 | Docker管理界面 |
-| Uptime Kuma | 3001 | 服务监控 |
-| Jellyfin | 8096 | 媒体服务器 |
-| FileBrowser | 8085 | Web文件管理 |
-| Home Assistant | 8123 | 智能家居 |
-| n8n | 5678 | 工作流自动化 |
-| Vaultwarden | 8123 | 密码管理器 |
 
 ### 监控/可观测性
 | 服务 | 端口 | 说明 |
@@ -354,19 +322,13 @@ docker-compose up -d
 |------|------|------|
 | Wireguard | 51820 | VPN服务 |
 | FRP | 7000, 7500 | 内网穿透 |
+| NPS | 8080, 8024 | 内网穿透 |
 
 ### 消息推送
 | 服务 | 端口 | 说明 |
 |------|------|------|
 | Gotify | 8080 | 消息推送 |
 | ntfy | 8080 | 推送通知 |
-
-### 数据库工具
-| 服务 | 端口 | 说明 |
-|------|------|------|
-| Adminer | 8080 | 轻量级数据库管理 |
-| CloudBeaver | 8978 | 企业级数据库管理 |
-| pgweb | 8081 | PostgreSQL Web管理 |
 
 ### 设计工具
 | 服务 | 端口 | 说明 |
@@ -379,7 +341,21 @@ docker-compose up -d
 |------|------|------|
 | PhotoPrism | 2342 | 照片管理 |
 | Immich | 2283 | 照片视频管理 |
-| Navirome | 3443 | 视频监控NVR |
+| Navidrome | 4533 | 音乐流媒体 |
+
+### LinuxServer.io / Home Lab
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| Code Server | 8443 | VS Code Web版 |
+| Syncthing | 8384 | 文件同步 |
+| Nextcloud | 444 | 私有云存储 |
+| Portainer | 9000 | Docker管理界面 |
+| Uptime Kuma | 3001 | 服务监控 |
+| Jellyfin | 8096 | 媒体服务器 |
+| FileBrowser | 8085 | Web文件管理 |
+| Home Assistant | 8123 | 智能家居 |
+| n8n | 5678 | 工作流自动化 |
+| Vaultwarden | 8123 | 密码管理器 |
 
 ### 实用工具
 | 服务 | 端口 | 说明 |
@@ -392,32 +368,7 @@ docker-compose up -d
 | Hoppscotch | 3000 | API测试 |
 | HTTPBin | 8080 | HTTP测试 |
 | Whoami | 8080 | 测试服务 |
-
-### 其他
-| 服务 | 版本 | 端口 | 说明 |
-|------|------|------|------|
-| Imgproxy | 3 | 8080 | 图片处理 |
-| NPS | latest | 8080, 8024 | 内网穿透 |
-| RustFS | latest | 9000 | 文件系统 |
-
-## 镜像源说明
-
-| 镜像源 | 特点 | 使用场景 |
-|--------|------|----------|
-| **官方镜像** | Docker Hub 官方维护 | 默认选择 |
-| **Bitnami** | 更安全、更精简、生产级 | 生产环境 |
-| **LinuxServer.io** | 社区维护、支持PUID/PGID | 家庭服务器 |
-
-### Bitnami 镜像优势
-- 镜像更精简，安全性更高
-- 定期更新，包含安全补丁
-- 提供完整的环境变量配置
-- 生产环境推荐
-
-### LinuxServer.io 镜像优势
-- 统一的 PUID/PGID 权限管理
-- 适合 NAS 和家庭服务器
-- 活跃的社区支持
+| Imgproxy | 8080 | 图片处理 |
 
 ## 默认账号密码
 
@@ -435,6 +386,8 @@ docker-compose up -d
 | Gitea | (首次访问设置) | - |
 | GitLab | root | gitlab123456 |
 | Konga | admin | admin123456 |
+| Meilisearch | - | meilisearch123456 (Master Key) |
+| Seata | seata | seata |
 
 ## 常用命令
 
@@ -461,7 +414,7 @@ docker-compose rm -f
 docker stats
 
 # 单独服务目录
-cd redis/redis7
+cd cache/redis/redis7
 docker-compose up -d
 docker-compose logs -f
 docker-compose down

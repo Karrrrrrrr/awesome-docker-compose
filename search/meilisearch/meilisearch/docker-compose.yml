@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  meilisearch:
+    image: getmeili/meilisearch:v1.6
+    container_name: meilisearch
+    restart: unless-stopped
+    environment:
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY:-meilisearch123456}
+      - MEILI_ENV=development
+      - MEILI_HTTP_ADDR=0.0.0.0:7700
+      - TZ=Asia/Shanghai
+    ports:
+      - "${MEILI_PORT:-7700}:7700"
+    volumes:
+      - meilisearch_data:/meili_data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:7700/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - meilisearch_network
+
+networks:
+  meilisearch_network:
+    driver: bridge
+
+volumes:
+  meilisearch_data:
