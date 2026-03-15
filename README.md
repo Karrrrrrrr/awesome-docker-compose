@@ -129,6 +129,12 @@ awesome-docker-compose/
 ├── dragonfly/
 │   └── dragonfly/docker-compose.yml  # Dragonfly (Redis替代)
 │
+├── dtm/
+│   └── dtm/docker-compose.yml      # DTM 分布式事务管理器
+│
+├── jaeger/
+│   └── jaeger/docker-compose.yml   # Jaeger 分布式链路追踪
+│
 ├── rustfs/
 │   └── rustfs/docker-compose.yml   # RustFS
 │
@@ -315,6 +321,12 @@ docker-compose up -d
 |------|------|------|----------|
 | Consul | 1 | 8500 | UI: 8500 |
 | Etcd | 3 | 2379 | etcdkeeper: 8080 |
+
+### 分布式事务/链路追踪
+| 服务 | 版本 | 端口 | 管理界面 |
+|------|------|------|----------|
+| DTM | latest | 36789 (HTTP), 36790 (gRPC) | - |
+| Jaeger | latest | 16686 (UI), 14268 (HTTP), 4317 (OTLP gRPC) | UI: 16686 |
 
 ### MQTT
 | 服务 | 版本 | 端口 | 管理界面 |
